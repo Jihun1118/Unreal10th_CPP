@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "InputactionValue.h"
 #include "ActionPlayerController.generated.h"
 
 class UInputMappingContext;
@@ -26,6 +27,15 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UInputAction> IA_Look = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float ViewPicthMax = 30;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float ViewPicthMin = -40;
+
+private:
+	void OnLookInput(const FInputActionValue& InValue);
 
 private:
 	// 입력 우선 순위
