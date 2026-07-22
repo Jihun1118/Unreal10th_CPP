@@ -33,6 +33,7 @@ protected:
 protected:
 	void OnTestAction(const FInputActionValue& Value);
 	void OnMoveAction(const FInputActionValue& Value);
+	void OnRollAction(const FInputActionValue& Value);
 	void OnSprintStart();
 	void OnSprintEnd();
 
@@ -46,6 +47,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UInputAction> IA_Sprint;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UInputAction> IA_Roll;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TWeakObjectPtr<UAnimMontage> RollMontage;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SprintSpeed = 1200;
 
@@ -58,4 +65,8 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UCameraComponent> CameraComponent = nullptr;
+
+private:
+	UPROPERTY()
+	TObjectPtr<UAnimInstance> AnimInstance = nullptr;
 };

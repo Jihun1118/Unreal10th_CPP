@@ -28,7 +28,14 @@ AActionCharacter::AActionCharacter()
 void AActionCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+	if (GetCharacterMovement())
+	{
+		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+	}
+	if (GetMesh())
+	{
+		AnimInstance = GetMesh()->GetAnimInstance();
+	}
 }
 
 // Called every frame
@@ -47,6 +54,7 @@ void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	{
 		EnhancedInputComponent->BindAction(IA_Test, ETriggerEvent::Started, this, &AActionCharacter::OnTestAction);
 		EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AActionCharacter::OnMoveAction);
+		EnhancedInputComponent->BindAction(IA_Roll, ETriggerEvent::Started, this, &AActionCharacter::OnRollAction);
 		EnhancedInputComponent->BindActionValueLambda(IA_Sprint, ETriggerEvent::Started,
 			[this](const FInputActionValue& _) {
 				OnSprintStart();
@@ -87,6 +95,27 @@ void AActionCharacter::OnMoveAction(const FInputActionValue& Value)
 	WorldDirection = ContolYawRotation.RotateVector(WorldDirection);
 
 	AddMovementInput(WorldDirection);
+}
+
+void AActionCharacter::OnRollAction(const FInputActionValue& Value)
+{
+	//UE_LOG(LogTemp, Log, TEXT("OnRollAction"));
+	if (!RollMontage.IsValid()) return;
+	
+	if (!AnimInstance)
+	{
+		AnimInstance = GetMesh()->GetAnimInstance();
+	}
+
+	if (AnimInstance && !AnimInstance->IsAnyMontagePlaying())
+	{
+		if (!GetLastMovementInputVector().IsNearlyZero())	// 이동 입력 중이면
+		{
+			SetActorRotation(GetLastMovementInputVector().Rotation());	// 입력방향으로 즉시 회전해서 구르기
+		}
+
+		PlayAnimMontage(RollMontage.Get());
+	}
 }
 
 void AActionCharacter::OnSprintStart()
