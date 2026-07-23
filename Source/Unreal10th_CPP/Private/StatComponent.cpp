@@ -15,6 +15,7 @@ UStatComponent::UStatComponent()
 
 void UStatComponent::InitializeStat(FAutoRecoveryData& InData)
 {
+	CurrentStamina = MaxStamina;
 	StaminaRecoveryData = InData;
 }
 
@@ -69,12 +70,8 @@ void UStatComponent::RecoveryStamina_Implementation(float InAmount)
 void UStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	CurrentStamina = MaxStamina;
-
 	//GetCurrentStamina();	// 실행했을 때 C++에 구현된 내용만 호출한다.
-	//IStaminaInterface::Execute_GetCurrentStamina(this);	// 실행했을 때 블루프린트 구현으로 호출한다.
-	
+	//IStaminaInterface::Execute_GetCurrentStamina(this);	// 실행했을 때 블루프린트 구현으로 호출한다.	
 }
 
 
