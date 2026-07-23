@@ -35,17 +35,19 @@ bool AActionCharacter::ConsumeStamina_Implementation(float InAmount)
 	if (CurrentStamina >= InAmount)
 	{
 		CurrentStamina -= InAmount;
+
+		StaminaAutoRecoveryTimer = StaminaAutoRecoveryCoolTime;	// 스테미너를 사용 했으면 StaminaAutoRecoveryTimer 리셋
 		bResult = true;
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("현재 Stamina : %.1f"), CurrentStamina);
+	UE_LOG(LogTemp, Log, TEXT("Stamina : %.1f / %.1f"), CurrentStamina, MaxStamina);
 	return bResult;
 }
 
 void AActionCharacter::RecoveryStamina_Implementation(float InAmount)
 {
 	CurrentStamina = FMath::Clamp(CurrentStamina + InAmount, 0.0f, MaxStamina);
-	UE_LOG(LogTemp, Log, TEXT("현재 Stamina : %.1f"), CurrentStamina);
+	UE_LOG(LogTemp, Log, TEXT("Stamina : %.1f / %.1f"), CurrentStamina, MaxStamina);
 }
 
 // Called when the game starts or when spawned
@@ -72,6 +74,31 @@ void AActionCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	SpendSprintStamina(DeltaTime);
+	StaminaAutoRecoverty(DeltaTime);
+}
+
+void AActionCharacter::SpendSprintStamina(float DeltaTime)
+{
+	// 달리기 모드이고, 이동하고 있고, 몽타주 재생 중이 아니면
+	if (bSprintMode && !GetVelocity().IsNearlyZero() &&
+		(AnimInstance && !AnimInstance->IsAnyMontagePlaying()))
+	{
+		// 스테미너 지속적으로 감소
+		if (!IStaminaInterface::Execute_ConsumeStamina(this, SprintStaminaCostPerSec * DeltaTime))
+		{
+			OnSprintEnd();	// 스테미너가 다 떨어지면 달리기 모드 정지
+		}
+	}
+}
+
+void AActionCharacter::StaminaAutoRecoverty(float DeltaTime)
+{
+	StaminaAutoRecoveryTimer -= DeltaTime;
+	if (StaminaAutoRecoveryTimer < 0.0f)
+	{
+		IStaminaInterface::Execute_RecoveryStamina(this, StaminaAutoRecoveryPerSec * DeltaTime);
+	}
 }
 
 // Called to bind functionality to input
@@ -136,24 +163,29 @@ void AActionCharacter::OnRollAction(const FInputActionValue& Value)
 		AnimInstance = GetMesh()->GetAnimInstance();
 	}
 
-	if (AnimInstance && !AnimInstance->IsAnyMontagePlaying())
+	if (IStaminaInterface::Execute_ConsumeStamina(this, RollStaminaCost))	// 스테미너 소비 시도 후 소비되면 구르기 실행
 	{
-		if (!GetLastMovementInputVector().IsNearlyZero())	// 이동 입력 중이면
+		if (AnimInstance && !AnimInstance->IsAnyMontagePlaying())
 		{
-			SetActorRotation(GetLastMovementInputVector().Rotation());	// 입력방향으로 즉시 회전해서 구르기
-		}
+			if (!GetLastMovementInputVector().IsNearlyZero())	// 이동 입력 중이면
+			{
+				SetActorRotation(GetLastMovementInputVector().Rotation());	// 입력방향으로 즉시 회전해서 구르기
+			}
 
-		PlayAnimMontage(RollMontage);
+			PlayAnimMontage(RollMontage);
+		}
 	}
 }
 
 void AActionCharacter::OnSprintStart()
 {
 	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+	bSprintMode = true;
 }
 
 void AActionCharacter::OnSprintEnd()
 {
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+	bSprintMode = false;
 }
 

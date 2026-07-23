@@ -32,6 +32,8 @@ protected:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void StaminaAutoRecoverty(float DeltaTime);
+
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -41,6 +43,9 @@ protected:
 	void OnRollAction(const FInputActionValue& Value);
 	void OnSprintStart();
 	void OnSprintEnd();
+
+private:
+	void SpendSprintStamina(float DeltaTime);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -70,6 +75,22 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MaxStamina = 100.0f;
 
+	// 구르기에 필요한 스태미너 코스트
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float RollStaminaCost = 30.0f;
+
+	// 달리기에 필요한 초당 스태미너 코스트
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SprintStaminaCostPerSec = 2.0f;
+
+	// 스태미너 사용 후 자동 회복에 걸리는 시간
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float StaminaAutoRecoveryCoolTime = 3.0f;
+
+	// 스태미너가 자동 회복 될 때 초당 회복량
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float StaminaAutoRecoveryPerSec = 10.0f;
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USpringArmComponent> CameraSpringArmComponent = nullptr;
@@ -80,4 +101,8 @@ protected:
 private:
 	UPROPERTY()
 	TObjectPtr<UAnimInstance> AnimInstance = nullptr;
+
+	bool bSprintMode = false;
+
+	float StaminaAutoRecoveryTimer = 0.0f;
 };
