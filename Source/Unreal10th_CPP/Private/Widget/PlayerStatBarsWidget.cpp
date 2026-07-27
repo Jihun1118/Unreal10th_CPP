@@ -6,7 +6,7 @@
 #include "Interface/StatInterface.h"
 #include "Interface/HealthInterface.h"
 #include "Interface/StaminaInterface.h"
-#include "StatComponent.h"
+#include "Component/StatComponent.h"
 
 void UPlayerStatBarsWidget::NativeConstruct()
 {

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "StatBarWidget.generated.h"
+#include "TestWidget.generated.h"
 
 
 class UImage;
@@ -13,7 +13,7 @@ class UTextBlock;
  * 
  */
 UCLASS()
-class UNREAL10TH_CPP_API UStatBarWidget : public UUserWidget
+class UNREAL10TH_CPP_API UTestWidget : public UUserWidget
 {
 	GENERATED_BODY()
 

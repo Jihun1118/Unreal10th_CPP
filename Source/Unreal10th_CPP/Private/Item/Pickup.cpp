@@ -1,13 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Pickup.h"
-#include "Components/SphereComponent.h"
-#include "Components/StaticMeshComponent.h"
-#include "StatComponent.h"
+#include "Item/Pickup.h"
+#include "Component/StatComponent.h"
 #include "Interface/StaminaInterface.h"
 #include "Interface/HealthInterface.h"
 #include "Interface/StatInterface.h"
+
+#include "Components/SphereComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 // Sets default values
 APickup::APickup()

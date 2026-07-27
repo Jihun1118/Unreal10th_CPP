@@ -1,12 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ActionCharacter.h"
+#include "Player/ActionCharacter.h"
+#include "Component/StatComponent.h"
+
 #include "EnhancedInputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
-#include "StatComponent.h"
 
 // Sets default values
 AActionCharacter::AActionCharacter()
