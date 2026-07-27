@@ -5,9 +5,9 @@
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "StatComponent.h"
-#include "../Interface/StaminaInterface.h"
-#include "../Interface/HealthInterface.h"
-#include "../Interface/StatInterface.h"
+#include "Interface/StaminaInterface.h"
+#include "Interface/HealthInterface.h"
+#include "Interface/StatInterface.h"
 
 // Sets default values
 APickup::APickup()

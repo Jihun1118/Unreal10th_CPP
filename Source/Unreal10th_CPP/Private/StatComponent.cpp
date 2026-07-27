@@ -58,9 +58,9 @@ bool UStatComponent::ConsumeStamina_Implementation(float InAmount)
 		}
 
 		bResult = true;
+		UE_LOG(LogTemp, Log, TEXT("Stamina : %.1f / %.1f"), CurrentStamina, MaxStamina);
 	}
 
-	//UE_LOG(LogTemp, Log, TEXT("Stamina : %.1f / %.1f"), CurrentStamina, MaxStamina);
 	return bResult;
 }
 

@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "../Interface/StaminaInterface.h"
-#include "../Interface/HealthInterface.h"
+#include "Interface/StaminaInterface.h"
+#include "Interface/HealthInterface.h"
 #include "StatComponent.generated.h"
 
 //DECLARE_DELEGATE(FNormal);			// 함수 포인터 사용. 빠르다.

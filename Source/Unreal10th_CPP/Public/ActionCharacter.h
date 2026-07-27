@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
-#include "../Interface/StatInterface.h"
+#include "Interface/StatInterface.h"
 #include "ActionCharacter.generated.h"
 
 class UInputAction;
