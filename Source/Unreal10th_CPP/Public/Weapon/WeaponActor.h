@@ -21,32 +21,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintCallable)
-	void OnEquipped(AActor* InOwner);
-
-	UFUNCTION()
-	void OnHitAreaBeginOverlap(		
-		UPrimitiveComponent*	InOverlappedComponent, 
-		AActor*					InOtherActor, 
-		UPrimitiveComponent*	InOtherComp, 
-		int32					InOtherBodyIndex, 
-		bool					bFromSweep, 
-		const FHitResult&		InSweepResult);
-
-	UFUNCTION(BlueprintCallable)
-	void AttackEnable(bool bEnable);
-
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UStaticMeshComponent> Mesh = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UCapsuleComponent> HitArea = nullptr;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FName AttachSocketName = TEXT("hand_rSocket");
-
-private:
-	// 무기를 장비하고 있는 대상
-	TWeakObjectPtr<ACharacter> OwnerCharacter = nullptr;
 };
