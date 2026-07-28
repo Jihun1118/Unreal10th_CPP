@@ -100,7 +100,7 @@ void AActionCharacter::SectionJumpForCombo()
 			SectionJumpNotify->GetNextSectionName(),			// 이 섹션으로 변경(to)
 			Current	// 적용할 몽타주
 		);
-
+		OnWeaponAttackState(false);
 		IStaminaInterface::Execute_ConsumeStamina(GetStatComponent(), AttackCost);
 		bComboReady = false;	// 중복실행 방지
 	}
@@ -167,6 +167,7 @@ void AActionCharacter::OnAttackAction(const FInputActionValue& Value)
 		{
 			// 첫번째 콤보 공격
 			PlayAnimMontage(AttackMontage);
+			OnWeaponAttackState(false);
 			IStaminaInterface::Execute_ConsumeStamina(GetStatComponent(), AttackCost);
 		}
 		else if (AnimInstance->GetCurrentActiveMontage() == AttackMontage)
