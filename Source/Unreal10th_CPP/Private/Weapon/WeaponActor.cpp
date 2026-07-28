@@ -2,10 +2,12 @@
 
 
 #include "Weapon/WeaponActor.h"
+#include "Interface/WeaponUserInterface.h"
+
+#include "Unreal10th_CPP/Unreal10th_CPP.h"
 #include "GameFramework/Character.h"
 #include "Components/CapsuleComponent.h"
-#include "Interface/WeaponUserInterface.h"
-#include "Unreal10th_CPP/Unreal10th_CPP.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AWeaponActor::AWeaponActor()
@@ -62,6 +64,7 @@ void AWeaponActor::OnEquipped(AActor* InOwner)
 void AWeaponActor::OnHitAreaBeginOverlap(UPrimitiveComponent* InOverlappedComponent, AActor* InOtherActor, UPrimitiveComponent* InOtherComp, int32 InOtherBodyIndex, bool bFromSweep, const FHitResult& InSweepResult)
 {
 	UE_LOG(LogTemp, Log, TEXT("오버랩 된 대상 : %s"), *InOtherActor->GetName());
+	//UGameplayStatics::ApplyDamage()를 호출하면 대상의 TakeDamage함수가 호출된다.
 }
 
 void AWeaponActor::AttackEnable(bool bEnable)
