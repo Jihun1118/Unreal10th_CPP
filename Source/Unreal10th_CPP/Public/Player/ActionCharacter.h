@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "Interface/StatInterface.h"
+#include "Interface/WeaponUserInterface.h"
 #include "ActionCharacter.generated.h"
 
 class UInputAction;
@@ -14,8 +15,9 @@ class UCameraComponent;
 class UStatComponent;
 class UAnimNotifyState_SectionJump;
 
+
 UCLASS()
-class UNREAL10TH_CPP_API AActionCharacter : public ACharacter, public IStatInterface
+class UNREAL10TH_CPP_API AActionCharacter : public ACharacter, public IStatInterface, public IWeaponUserInterface
 {
 	GENERATED_BODY()
 
@@ -26,7 +28,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Stat")
 	virtual UStatComponent* GetStatComponent() const override;
 
+	virtual void OnWeaponAttackState(bool bEnable) override;
+
 	void SetSectionJumpNotify(UAnimNotifyState_SectionJump* InSectionJunpNotify);
+
+	virtual FOnWeaponAttackStateChaged& GetWeaponAttackStateChagedDelegate() override {
+		return OnOnWeaponAttackStateChaged;
+	};
 
 protected:
 	// Called when the game starts or when spawned
@@ -50,6 +58,9 @@ private:
 	void SpendSprintStamina(float DeltaTime);
 
 	void SectionJumpForCombo();	// 콤보용으로 섹션 점프하는 함수
+
+public:
+	FOnWeaponAttackStateChaged OnOnWeaponAttackStateChaged;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
