@@ -37,7 +37,7 @@ UStatComponent* AActionCharacter::GetStatComponent() const
 
 void AActionCharacter::OnWeaponAttackState(bool bEnable)
 {
-	OnOnWeaponAttackStateChaged.Execute(bEnable);
+	OnOnWeaponAttackStateChanged.Execute(bEnable);
 }
 
 void AActionCharacter::SetSectionJumpNotify(UAnimNotifyState_SectionJump* InSectionJunpNotify)

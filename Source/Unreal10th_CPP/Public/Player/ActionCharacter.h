@@ -32,8 +32,8 @@ public:
 
 	void SetSectionJumpNotify(UAnimNotifyState_SectionJump* InSectionJunpNotify);
 
-	virtual FOnWeaponAttackStateChaged& GetWeaponAttackStateChagedDelegate() override {
-		return OnOnWeaponAttackStateChaged;
+	virtual FOnWeaponAttackStateChanged& GetWeaponAttackStateChangedDelegate() override {
+		return OnOnWeaponAttackStateChanged;
 	};
 
 protected:
@@ -60,7 +60,7 @@ private:
 	void SectionJumpForCombo();	// 콤보용으로 섹션 점프하는 함수
 
 public:
-	FOnWeaponAttackStateChaged OnOnWeaponAttackStateChaged;
+	FOnWeaponAttackStateChanged OnOnWeaponAttackStateChanged;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

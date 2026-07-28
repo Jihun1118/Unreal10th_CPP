@@ -55,7 +55,7 @@ void AWeaponActor::OnEquipped(AActor* InOwner)
 		HitArea->IgnoreActorWhenMoving(OwnerCharacter.Get(), true);	// 만약을 대비한 것
 
 		IWeaponUserInterface* WeaponUser = Cast<IWeaponUserInterface>(OwnerCharacter);
-		WeaponUser->GetWeaponAttackStateChagedDelegate().BindUFunction(this, FName("AttackEnable"));
+		WeaponUser->GetWeaponAttackStateChangedDelegate().BindUFunction(this, FName("AttackEnable"));
 	}
 }
 

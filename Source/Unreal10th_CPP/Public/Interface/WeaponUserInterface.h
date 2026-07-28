@@ -6,7 +6,7 @@
 #include "UObject/Interface.h"
 #include "WeaponUserInterface.generated.h"
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FOnWeaponAttackStateChaged, bool, bEnable);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnWeaponAttackStateChanged, bool, bEnable);
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
@@ -25,5 +25,5 @@ class UNREAL10TH_CPP_API IWeaponUserInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	virtual void OnWeaponAttackState(bool bEnable) = 0;
-	virtual FOnWeaponAttackStateChaged& GetWeaponAttackStateChagedDelegate() = 0;
+	virtual FOnWeaponAttackStateChanged& GetWeaponAttackStateChangedDelegate() = 0;
 };
