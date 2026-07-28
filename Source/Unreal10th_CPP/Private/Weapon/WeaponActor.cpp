@@ -2,7 +2,9 @@
 
 
 #include "Weapon/WeaponActor.h"
+#include "GameFramework/Character.h"
 #include "Components/CapsuleComponent.h"
+#include "Interface/WeaponUserInterface.h"
 #include "Unreal10th_CPP/Unreal10th_CPP.h"
 
 // Sets default values
