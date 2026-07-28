@@ -35,6 +35,11 @@ UStatComponent* AActionCharacter::GetStatComponent() const
 	return StatComponent;
 }
 
+void AActionCharacter::OnWeaponAttackState(bool bEnable)
+{
+	OnOnWeaponAttackStateChanged.Execute(bEnable);
+}
+
 void AActionCharacter::SetSectionJumpNotify(UAnimNotifyState_SectionJump* InSectionJunpNotify)
 {
 	SectionJumpNotify = InSectionJunpNotify;

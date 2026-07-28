@@ -34,5 +34,42 @@ AWeaponActor::AWeaponActor()
 void AWeaponActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	HitArea->OnComponentBeginOverlap.AddDynamic(this, &AWeaponActor::OnHitAreaBeginOverlap);
+}
+
+void AWeaponActor::OnEquipped(AActor* InOwner)
+{
+	SetOwner(InOwner);
+	OwnerCharacter = Cast<ACharacter>(InOwner);
+	FAttachmentTransformRules AttachRules(
+		EAttachmentRule::SnapToTarget,
+		EAttachmentRule::SnapToTarget,
+		EAttachmentRule::SnapToTarget,
+		true);
+
+	if (OwnerCharacter.IsValid())
+	{
+		AttachToComponent(OwnerCharacter->GetMesh(), AttachRules, AttachSocketName);
+		HitArea->IgnoreActorWhenMoving(OwnerCharacter.Get(), true);	// 만약을 대비한 것
+
+		IWeaponUserInterface* WeaponUser = Cast<IWeaponUserInterface>(OwnerCharacter);
+		WeaponUser->GetWeaponAttackStateChangedDelegate().BindUFunction(this, FName("AttackEnable"));
+	}
+}
+
+void AWeaponActor::OnHitAreaBeginOverlap(UPrimitiveComponent* InOverlappedComponent, AActor* InOtherActor, UPrimitiveComponent* InOtherComp, int32 InOtherBodyIndex, bool bFromSweep, const FHitResult& InSweepResult)
+{
+	UE_LOG(LogTemp, Log, TEXT("오버랩 된 대상 : %s"), *InOtherActor->GetName());
+}
+
+void AWeaponActor::AttackEnable(bool bEnable)
+{
+	if (bEnable)
+	{
+		HitArea->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	}
+	else
+	{
+		HitArea->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
 }
