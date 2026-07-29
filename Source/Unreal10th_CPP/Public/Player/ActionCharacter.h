@@ -14,7 +14,8 @@ class USpringArmComponent;
 class UCameraComponent;
 class UStatComponent;
 class UAnimNotifyState_SectionJump;
-
+class AWeaponActor;
+class UWeaponDataAsset;
 
 UCLASS()
 class UNREAL10TH_CPP_API AActionCharacter : public ACharacter, public IStatInterface, public IWeaponUserInterface
@@ -25,16 +26,22 @@ public:
 	// Sets default values for this character's properties
 	AActionCharacter();	
 
-	UFUNCTION(BlueprintCallable, Category = "Stat")
-	virtual UStatComponent* GetStatComponent() const override;
+	// 무기 장비 함수들
+	virtual void EqueipWeapon_Implementation(UWeaponDataAsset* InWeaponData) override;
+	//void UnEquipWeapon();
 
+	// 이벤트 함수
 	virtual void OnWeaponAttackState(bool bEnable) override;
 
-	void SetSectionJumpNotify(UAnimNotifyState_SectionJump* InSectionJunpNotify);
+	// Getter / Setter들
+	UFUNCTION(BlueprintCallable, Category = "Stat")
+	virtual UStatComponent* GetStatComponent() const override;
 
 	virtual FOnWeaponAttackStateChanged& GetWeaponAttackStateChangedDelegate() override {
 		return OnOnWeaponAttackStateChanged;
 	};
+
+	void SetSectionJumpNotify(UAnimNotifyState_SectionJump* InSectionJunpNotify);
 
 protected:
 	// Called when the game starts or when spawned
@@ -45,6 +52,8 @@ protected:
 	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 protected:
 	void OnTestAction(const FInputActionValue& Value);
@@ -117,6 +126,10 @@ protected:
 	// 공격시 소비되는 스테미너 양
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
 	float AttackCost = 5.0f;
+
+	// 현재 장비 중인 무기
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
+	TWeakObjectPtr<AWeaponActor> CurrentWeapon = nullptr;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

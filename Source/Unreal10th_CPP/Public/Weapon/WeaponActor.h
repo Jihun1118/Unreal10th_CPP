@@ -18,6 +18,9 @@ public:
 	// Sets default values for this actor's properties
 	AWeaponActor();
 
+	UFUNCTION(BlueprintCallable)
+	void EquipToTarget(AActor* Target);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -46,6 +49,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FName AttachSocketName = TEXT("hand_rSocket");
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AttackPower = 10.0f;
 
 private:
 	// 무기를 장비하고 있는 대상

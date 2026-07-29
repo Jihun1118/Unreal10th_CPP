@@ -4,6 +4,7 @@
 #include "Player/ActionCharacter.h"
 #include "Component/StatComponent.h"
 #include "AnimNotify/AnimNotifyState_SectionJump.h"
+#include "Data/WeaponDataAsset.h"
 
 #include "EnhancedInputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -29,6 +30,11 @@ AActionCharacter::AActionCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;	// 캐릭터 이동방향으로 바라보게 만들기
 }
 
+void AActionCharacter::EqueipWeapon_Implementation(UWeaponDataAsset* InWeaponData)
+{
+	//InWeaponData->Mesh.Get();
+}
+
 UStatComponent* AActionCharacter::GetStatComponent() const
 {
 	//return nullptr;
@@ -37,7 +43,8 @@ UStatComponent* AActionCharacter::GetStatComponent() const
 
 void AActionCharacter::OnWeaponAttackState(bool bEnable)
 {
-	OnOnWeaponAttackStateChanged.Execute(bEnable);
+	//OnOnWeaponAttackStateChanged.Execute(bEnable);
+	OnOnWeaponAttackStateChanged.ExecuteIfBound(bEnable);
 }
 
 void AActionCharacter::SetSectionJumpNotify(UAnimNotifyState_SectionJump* InSectionJunpNotify)
@@ -100,7 +107,7 @@ void AActionCharacter::SectionJumpForCombo()
 			SectionJumpNotify->GetNextSectionName(),			// 이 섹션으로 변경(to)
 			Current	// 적용할 몽타주
 		);
-
+		OnWeaponAttackState(false);
 		IStaminaInterface::Execute_ConsumeStamina(GetStatComponent(), AttackCost);
 		bComboReady = false;	// 중복실행 방지
 	}
@@ -126,6 +133,20 @@ void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 				OnSprintEnd();
 			});
 	}
+}
+
+float AActionCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	if (UStatComponent* StatComp = GetStatComponent())
+	{
+		IHealthInterface::Execute_DamageHealth(StatComp, Damage);
+
+		UE_LOG(LogTemp, Log, TEXT("%.1f 데미지를 입었습니다. (공격자:%s)"), Damage, *EventInstigator->GetName());
+	}
+
+	return Damage;
 }
 
 void AActionCharacter::OnTestAction(const FInputActionValue& Value)
@@ -167,6 +188,7 @@ void AActionCharacter::OnAttackAction(const FInputActionValue& Value)
 		{
 			// 첫번째 콤보 공격
 			PlayAnimMontage(AttackMontage);
+			OnWeaponAttackState(false);
 			IStaminaInterface::Execute_ConsumeStamina(GetStatComponent(), AttackCost);
 		}
 		else if (AnimInstance->GetCurrentActiveMontage() == AttackMontage)

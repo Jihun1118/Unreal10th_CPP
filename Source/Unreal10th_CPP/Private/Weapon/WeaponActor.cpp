@@ -34,6 +34,11 @@ AWeaponActor::AWeaponActor()
 	HitArea->SetRelativeLocation(FVector(0.0f, 0.0f, 40.0f));
 }
 
+void AWeaponActor::EquipToTarget(AActor* Target)
+{
+	OnEquipped(Target);	
+}
+
 // Called when the game starts or when spawned
 void AWeaponActor::BeginPlay()
 {
@@ -57,7 +62,10 @@ void AWeaponActor::OnEquipped(AActor* InOwner)
 		HitArea->IgnoreActorWhenMoving(OwnerCharacter.Get(), true);	// 만약을 대비한 것
 
 		IWeaponUserInterface* WeaponUser = Cast<IWeaponUserInterface>(OwnerCharacter);
-		WeaponUser->GetWeaponAttackStateChangedDelegate().BindUFunction(this, FName("AttackEnable"));
+		if (WeaponUser)
+		{
+			WeaponUser->GetWeaponAttackStateChangedDelegate().BindUFunction(this, FName("AttackEnable"));
+		}
 	}
 }
 
@@ -65,6 +73,7 @@ void AWeaponActor::OnHitAreaBeginOverlap(UPrimitiveComponent* InOverlappedCompon
 {
 	UE_LOG(LogTemp, Log, TEXT("오버랩 된 대상 : %s"), *InOtherActor->GetName());
 	//UGameplayStatics::ApplyDamage()를 호출하면 대상의 TakeDamage함수가 호출된다.
+	UGameplayStatics::ApplyDamage(InOtherActor, AttackPower, OwnerCharacter->GetController(), this, nullptr);
 }
 
 void AWeaponActor::AttackEnable(bool bEnable)
