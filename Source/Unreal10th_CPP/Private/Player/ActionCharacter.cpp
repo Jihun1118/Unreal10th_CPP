@@ -37,7 +37,8 @@ UStatComponent* AActionCharacter::GetStatComponent() const
 
 void AActionCharacter::OnWeaponAttackState(bool bEnable)
 {
-	OnOnWeaponAttackStateChanged.Execute(bEnable);
+	//OnOnWeaponAttackStateChanged.Execute(bEnable);
+	OnOnWeaponAttackStateChanged.ExecuteIfBound(bEnable);
 }
 
 void AActionCharacter::SetSectionJumpNotify(UAnimNotifyState_SectionJump* InSectionJunpNotify)
@@ -126,6 +127,20 @@ void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 				OnSprintEnd();
 			});
 	}
+}
+
+float AActionCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	if (UStatComponent* StatComp = GetStatComponent())
+	{
+		IHealthInterface::Execute_DamageHealth(StatComp, Damage);
+
+		UE_LOG(LogTemp, Log, TEXT("%.1f 데미지를 입었습니다. (공격자:%s)"), Damage, *EventInstigator->GetName());
+	}
+
+	return Damage;
 }
 
 void AActionCharacter::OnTestAction(const FInputActionValue& Value)

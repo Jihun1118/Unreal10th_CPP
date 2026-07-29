@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Pickup.generated.h"
+#include "PickupBase.generated.h"
 
 class USphereComponent;
 
 UCLASS()
-class UNREAL10TH_CPP_API APickup : public AActor
+class UNREAL10TH_CPP_API APickupBase : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	APickup();
+	APickupBase();
 
 protected:
 	// Called when the game starts or when spawned
@@ -26,8 +26,8 @@ protected:
 
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
-	// 오버랩 됬을 때 대상에게 효과를 적용하는 함수
-	virtual void ApplyEffects(AActor* InTarget);
+	// 오버랩 됬을 때 대상에게 실제 작업을 처리하는 함수
+	virtual void OnPickup(AActor* InTarget);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -35,11 +35,5 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UStaticMeshComponent> Mesh = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Health = 0.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Stamina = 0.0f;
 
 };
