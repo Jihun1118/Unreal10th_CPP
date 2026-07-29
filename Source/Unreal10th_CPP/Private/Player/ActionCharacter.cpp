@@ -5,11 +5,13 @@
 #include "Component/StatComponent.h"
 #include "AnimNotify/AnimNotifyState_SectionJump.h"
 #include "Data/WeaponDataAsset.h"
+#include "Weapon/WeaponActor.h"
 
 #include "EnhancedInputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AActionCharacter::AActionCharacter()
@@ -32,6 +34,29 @@ AActionCharacter::AActionCharacter()
 
 void AActionCharacter::EqueipWeapon_Implementation(UWeaponDataAsset* InWeaponData)
 {
+	CurrentWeaponData = InWeaponData;
+	if (!InWeaponData->IsLoadCompledted())
+	{
+		InWeaponData->RequestDataLoad(
+			FStreamableDelegate::CreateWeakLambda(this, [this]()
+				{
+					// 로딩이 완료되면 실행되는 람다 함수
+					CurrentWeapon = GetWorld()->SpawnActorDeferred<AWeaponActor>(
+						AWeaponActor::StaticClass(), FTransform::Identity, this, this);	// 스폰 시작
+					if (CurrentWeapon.IsValid())
+					{
+						CurrentWeapon->InitializeWeapon(CurrentWeaponData);
+						UGameplayStatics::FinishSpawningActor(CurrentWeapon.Get(), FTransform::Identity);	// 스폰 완료(=BeginPlay까지 실행)
+					}
+					CurrentWeapon->EquipToTarget(this);
+				})
+		);
+
+		// 이전 무기 해제하기
+		// 피봇 조정하기
+	}
+
+	
 	//InWeaponData->Mesh.Get();
 }
 

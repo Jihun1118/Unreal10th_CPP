@@ -19,7 +19,11 @@ public:
 	AWeaponActor();
 
 	UFUNCTION(BlueprintCallable)
+	void InitializeWeapon(UWeaponDataAsset* InData);
+
+	UFUNCTION(BlueprintCallable)
 	void EquipToTarget(AActor* Target);
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -52,6 +56,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float AttackPower = 10.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UWeaponDataAsset> WeaponData;
 
 private:
 	// 무기를 장비하고 있는 대상

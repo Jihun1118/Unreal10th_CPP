@@ -34,6 +34,11 @@ AWeaponActor::AWeaponActor()
 	HitArea->SetRelativeLocation(FVector(0.0f, 0.0f, 40.0f));
 }
 
+void AWeaponActor::InitializeWeapon(UWeaponDataAsset* InData)
+{
+	WeaponData = InData;
+}
+
 void AWeaponActor::EquipToTarget(AActor* Target)
 {
 	OnEquipped(Target);	

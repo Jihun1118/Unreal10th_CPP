@@ -131,6 +131,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
 	TWeakObjectPtr<AWeaponActor> CurrentWeapon = nullptr;
 
+	// 현재 장비할 무기의 데이터 에셋(임시 : 무기 관리자로 넘길 예정)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
+	TObjectPtr<UWeaponDataAsset> CurrentWeaponData = nullptr;
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USpringArmComponent> CameraSpringArmComponent = nullptr;
