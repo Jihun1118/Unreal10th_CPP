@@ -16,9 +16,10 @@ class UNREAL10TH_CPP_API APickupWeapon : public APickupBase
 	GENERATED_BODY()
 	
 protected:
+	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void OnPickup(AActor* InTarget) override;
 
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWeaponDataAsset> WeaponData = nullptr;
 };

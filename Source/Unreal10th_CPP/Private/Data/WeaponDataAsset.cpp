@@ -4,11 +4,16 @@
 #include "Data/WeaponDataAsset.h"
 #include "Engine/AssetManager.h"
 
-TSharedPtr<FStreamableHandle> UWeaponDataAsset::RequestDataLoad(FStreamableDelegate InDelegate) const
+void UWeaponDataAsset::RequestDataLoad(FStreamableDelegate InDelegate)
 {
 	TArray<FSoftObjectPath> TargetsToLoad;
 	TargetsToLoad.Add(Mesh.ToSoftObjectPath());
 
 	FStreamableManager& Streamable = UAssetManager::GetStreamableManager();
-	return Streamable.RequestAsyncLoad(TargetsToLoad, MoveTemp(InDelegate));
+	AsyncLoadHandle = Streamable.RequestAsyncLoad(TargetsToLoad, MoveTemp(InDelegate));
+}
+
+bool UWeaponDataAsset::IsLoadCompledted() const
+{
+	return AsyncLoadHandle.IsValid() && AsyncLoadHandle.Get()->HasLoadCompleted();
 }
