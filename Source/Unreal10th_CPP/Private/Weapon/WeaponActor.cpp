@@ -3,6 +3,7 @@
 
 #include "Weapon/WeaponActor.h"
 #include "Interface/WeaponUserInterface.h"
+#include "Data/WeaponDataAsset.h"
 
 #include "Unreal10th_CPP/Unreal10th_CPP.h"
 #include "GameFramework/Character.h"
@@ -37,11 +38,28 @@ AWeaponActor::AWeaponActor()
 void AWeaponActor::InitializeWeapon(UWeaponDataAsset* InData)
 {
 	WeaponData = InData;
+	Mesh->SetStaticMesh(WeaponData->Mesh.Get());
+	// 피봇 조정하기
+	// HitArea크기 조정
 }
 
 void AWeaponActor::EquipToTarget(AActor* Target)
 {
 	OnEquipped(Target);	
+}
+
+void AWeaponActor::DropWeapon()
+{
+	FDetachmentTransformRules DetachRules(EDetachmentRule::KeepWorld, true);
+	DetachFromActor(DetachRules);
+
+	//Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	//Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	Mesh->SetCollisionProfileName(TEXT("PhysicsActor"));
+	Mesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Ignore);
+	Mesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+	Mesh->SetSimulatePhysics(true);
+	HitArea->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 // Called when the game starts or when spawned

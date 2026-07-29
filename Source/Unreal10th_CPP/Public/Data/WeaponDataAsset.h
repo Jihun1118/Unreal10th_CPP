@@ -17,8 +17,8 @@ class UNREAL10TH_CPP_API UWeaponDataAsset : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
-	void RequestDataLoad(FStreamableDelegate InDelegate);
-	bool IsLoadCompledted() const;
+	TSharedPtr<FStreamableHandle> RequestDataLoad(FStreamableDelegate InDelegate) const;
+	bool IsLoaded() const;
 
 public:
 	// 무기의 메시
@@ -45,6 +45,4 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponData")
 	float AttackPower = 10.0f;
 
-protected:
-	TSharedPtr<FStreamableHandle> AsyncLoadHandle;
 };

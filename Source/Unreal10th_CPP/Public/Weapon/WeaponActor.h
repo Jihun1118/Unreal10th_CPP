@@ -24,6 +24,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void EquipToTarget(AActor* Target);
 
+	UFUNCTION(BlueprintCallable)
+	void DropWeapon();
+
 
 protected:
 	// Called when the game starts or when spawned

@@ -34,28 +34,38 @@ AActionCharacter::AActionCharacter()
 
 void AActionCharacter::EqueipWeapon_Implementation(UWeaponDataAsset* InWeaponData)
 {
-	CurrentWeaponData = InWeaponData;
-	if (!InWeaponData->IsLoadCompledted())
+	// 이전 무기 해제하기
+	if (CurrentWeapon.IsValid())
 	{
-		InWeaponData->RequestDataLoad(
-			FStreamableDelegate::CreateWeakLambda(this, [this]()
-				{
-					// 로딩이 완료되면 실행되는 람다 함수
-					CurrentWeapon = GetWorld()->SpawnActorDeferred<AWeaponActor>(
-						AWeaponActor::StaticClass(), FTransform::Identity, this, this);	// 스폰 시작
-					if (CurrentWeapon.IsValid())
-					{
-						CurrentWeapon->InitializeWeapon(CurrentWeaponData);
-						UGameplayStatics::FinishSpawningActor(CurrentWeapon.Get(), FTransform::Identity);	// 스폰 완료(=BeginPlay까지 실행)
-					}
-					CurrentWeapon->EquipToTarget(this);
-				})
-		);
-
-		// 이전 무기 해제하기
-		// 피봇 조정하기
+		CurrentWeapon.Get()->DropWeapon();		
+		CurrentWeapon = nullptr;
 	}
 
+	// 새 무기 장비하기
+	CurrentWeaponData = InWeaponData;
+	if (!InWeaponData->IsLoaded())
+	{
+		UWeaponDataAsset* RequestedData = InWeaponData;
+		InWeaponData->RequestDataLoad(
+			FStreamableDelegate::CreateWeakLambda(
+				this, 
+				[this, RequestedData]()
+				{
+					// 로딩이 완료되면 실행되는 람다 함수					
+					if (CurrentWeaponData == RequestedData)
+					{
+						// 중복으로 로딩 요청했을 때를 대비
+						SpawnWeaponActor();
+					}
+				})
+		);		
+	}
+	else
+	{
+		SpawnWeaponActor();
+	}
+
+	
 	
 	//InWeaponData->Mesh.Get();
 }
@@ -135,6 +145,23 @@ void AActionCharacter::SectionJumpForCombo()
 		OnWeaponAttackState(false);
 		IStaminaInterface::Execute_ConsumeStamina(GetStatComponent(), AttackCost);
 		bComboReady = false;	// 중복실행 방지
+	}
+}
+
+void AActionCharacter::SpawnWeaponActor()
+{
+	if (!CurrentWeaponData)
+	{
+		return;	// 로딩 요청이 끝나기 전에 해제되었을 때를 대비
+	}
+
+	CurrentWeapon = GetWorld()->SpawnActorDeferred<AWeaponActor>(
+		AWeaponActor::StaticClass(), FTransform::Identity, this, this);	// 스폰 시작
+	if (CurrentWeapon.IsValid())
+	{
+		CurrentWeapon->InitializeWeapon(CurrentWeaponData);
+		UGameplayStatics::FinishSpawningActor(CurrentWeapon.Get(), FTransform::Identity);	// 스폰 완료(=BeginPlay까지 실행)
+		CurrentWeapon->EquipToTarget(this);
 	}
 }
 
