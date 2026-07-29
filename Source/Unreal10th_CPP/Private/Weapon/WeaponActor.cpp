@@ -56,6 +56,8 @@ void AWeaponActor::DropWeapon()
 	//Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 	//Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 	Mesh->SetCollisionProfileName(TEXT("PhysicsActor"));
+	Mesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Ignore);
+	Mesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	Mesh->SetSimulatePhysics(true);
 	HitArea->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
