@@ -68,6 +68,8 @@ private:
 
 	void SectionJumpForCombo();	// 콤보용으로 섹션 점프하는 함수
 
+	void SpawnWeaponActor();
+
 public:
 	FOnWeaponAttackStateChanged OnOnWeaponAttackStateChanged;
 
