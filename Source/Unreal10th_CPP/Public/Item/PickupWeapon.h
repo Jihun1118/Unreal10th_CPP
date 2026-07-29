@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Item/PickupBase.h"
+#include "Data/WeaponDataAsset.h"
 #include "PickupWeapon.generated.h"
 
 /**
@@ -18,6 +19,6 @@ protected:
 	virtual void OnPickup(AActor* InTarget) override;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<class AWeaponActor> WeaponType;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UWeaponDataAsset> WeaponData = nullptr;
 };

@@ -4,6 +4,7 @@
 #include "Player/ActionCharacter.h"
 #include "Component/StatComponent.h"
 #include "AnimNotify/AnimNotifyState_SectionJump.h"
+#include "Data/WeaponDataAsset.h"
 
 #include "EnhancedInputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -27,6 +28,11 @@ AActionCharacter::AActionCharacter()
 
 	bUseControllerRotationYaw = false;	// 컨트롤러 움직일 때 폰이 같이 회전되는 것 방지
 	GetCharacterMovement()->bOrientRotationToMovement = true;	// 캐릭터 이동방향으로 바라보게 만들기
+}
+
+void AActionCharacter::EqueipWeapon_Implementation(UWeaponDataAsset* InWeaponData)
+{
+	//InWeaponData->Mesh.Get();
 }
 
 UStatComponent* AActionCharacter::GetStatComponent() const

@@ -36,7 +36,7 @@ AWeaponActor::AWeaponActor()
 
 void AWeaponActor::EquipToTarget(AActor* Target)
 {
-	OnEquipped(Target);
+	OnEquipped(Target);	
 }
 
 // Called when the game starts or when spawned
