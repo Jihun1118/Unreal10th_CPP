@@ -11,7 +11,7 @@ class UStaticMesh;
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType)
 class UNREAL10TH_CPP_API UWeaponDataAsset : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
