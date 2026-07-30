@@ -64,4 +64,7 @@ private:
 
 	// 아이템을 줍는 연출용 타이머의 실행 간격
 	const float TimerInterval = 0.02f;
+
+	// 아이템을 줍는 연출용 시작 위치
+	FVector PickupStartLocation;
 };

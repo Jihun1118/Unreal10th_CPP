@@ -33,6 +33,7 @@ void APickupWeapon::OnPickup(AActor* InTarget)
 		// 더 이상의 오버랩이 발생하지 않게 하기
 		SphereCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+		PickupStartLocation = Mesh->GetComponentLocation();
 		PickupElapsedTime = 0.0f;
 
 		GetWorldTimerManager().SetTimer(
@@ -61,9 +62,8 @@ void APickupWeapon::OnUpdatePickupEffect()
 	float Progress = PickupElapsedTime / PickupEffectDuration;
 
 	float DistanceAlpha = PickupAlpha->GetFloatValue(Progress);
-	FVector Start = GetActorLocation();
 	FVector Goal = TargetActor.Get()->GetActorLocation();
-	FVector NewLocation = FMath::Lerp(Start, Goal, DistanceAlpha);
+	FVector NewLocation = FMath::Lerp(PickupStartLocation, Goal, DistanceAlpha);
 
 	float HeightOffset = PickupHeight->GetFloatValue(Progress) * PickupEffecHeight;
 	NewLocation.Z += HeightOffset;
