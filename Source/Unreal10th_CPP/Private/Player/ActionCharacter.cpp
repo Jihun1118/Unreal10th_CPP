@@ -186,6 +186,9 @@ void AActionCharacter::SpawnWeaponActorAndEquip()
 
 	CurrentWeapon = GetWorld()->SpawnActorDeferred<AWeaponActor>(
 		AWeaponActor::StaticClass(), FTransform::Identity, this, this);	// 스폰 시작
+	//CurrentWeapon = GetWorld()->SpawnActorDeferred<AWeaponActor>(
+	//	BaseWeaponType, FTransform::Identity, this, this);	// 스폰 시작
+
 	if (CurrentWeapon.IsValid())
 	{
 		CurrentWeapon->InitializeWeapon(CurrentWeaponData);

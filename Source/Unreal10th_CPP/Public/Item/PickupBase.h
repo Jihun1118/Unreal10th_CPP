@@ -62,7 +62,7 @@ protected:
 	TObjectPtr<USphereComponent> SphereCollision = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TObjectPtr<UStaticMeshComponent> Mesh = nullptr;
+	TObjectPtr<USkeletalMeshComponent> Mesh = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UNiagaraComponent> NiagaraComponent;

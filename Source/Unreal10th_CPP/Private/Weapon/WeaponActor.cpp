@@ -17,7 +17,7 @@ AWeaponActor::AWeaponActor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RootMesh"));
+	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("RootMesh"));
 	SetRootComponent(Mesh);
 	// Mesh->SetCollisionProfileName(TEXT("NoCollision"));	// 프로파일을 이용해 한번에 세팅(실제 적용되는 타이밍은 좀 뒤쪽이다)	
 	Mesh->SetGenerateOverlapEvents(false);
@@ -47,8 +47,9 @@ void AWeaponActor::InitializeWeapon(UWeaponDataAsset* InData)
 	
 	if (WeaponData->IsLoaded())	// 로딩이 완료되었을 때만 처리
 	{
-		// 메시 설정
-		Mesh->SetStaticMesh(WeaponData->Mesh.Get());
+		// 에셋 설정
+		Mesh->SetSkeletalMesh(WeaponData->Mesh.Get());
+		TrailVFX->SetAsset(WeaponData->TrailVFX.Get());
 	}
 		
 	// HitArea크기 조정

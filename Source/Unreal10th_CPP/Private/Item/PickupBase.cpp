@@ -16,7 +16,7 @@ APickupBase::APickupBase()
 	SphereCollision->InitSphereRadius(100.0f);
 	SetRootComponent(SphereCollision);
 
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(SphereCollision);
 	Mesh->SetCollisionProfileName("NoCollision");
 

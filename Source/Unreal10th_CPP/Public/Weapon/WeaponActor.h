@@ -64,7 +64,7 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TObjectPtr<UStaticMeshComponent> Mesh = nullptr;
+	TObjectPtr<USkeletalMeshComponent> Mesh = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UCapsuleComponent> HitArea = nullptr;

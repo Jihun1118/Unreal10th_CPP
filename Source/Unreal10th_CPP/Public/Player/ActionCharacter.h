@@ -145,6 +145,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
 	TObjectPtr<UWeaponDataAsset> DefaultWeaponData = nullptr;
 
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
+	//TSubclassOf<AWeaponActor> BaseWeaponType = nullptr;
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USpringArmComponent> CameraSpringArmComponent = nullptr;
