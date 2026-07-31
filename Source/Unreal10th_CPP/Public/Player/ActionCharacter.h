@@ -26,12 +26,13 @@ public:
 	// Sets default values for this character's properties
 	AActionCharacter();	
 
-	// 무기 장비 함수들
+	// 무기 장비 관련 함수들
 	virtual void EquipWeapon_Implementation(UWeaponDataAsset* InWeaponData) override;
 	//void UnEquipWeapon();
+	void OnWeaponDrop(UWeaponDataAsset* InDropWeaponData);	// 무기를 다 사용하여 드랍되었을 때 실행될 함수
 
 	// 이벤트 함수
-	virtual void OnWeaponAttackState(bool bEnable) override;
+	virtual void OnWeaponAttackState(bool bEnable) override;	// 무기 공격 활성화/비활성화 때 실행되는 함수
 
 	// Getter / Setter들
 	UFUNCTION(BlueprintCallable, Category = "Stat")
@@ -68,7 +69,10 @@ private:
 
 	void SectionJumpForCombo();	// 콤보용으로 섹션 점프하는 함수
 
-	void SpawnWeaponActor();
+	void SpawnWeaponActorAndEquip();
+
+	// 공격 몽타주가 끝났을 때 실행될 함수
+	void OnAttackEnded(UAnimMontage* InMontage, bool bInterrupted);
 
 public:
 	FOnWeaponAttackStateChanged OnOnWeaponAttackStateChanged;
@@ -130,12 +134,16 @@ protected:
 	float AttackCost = 5.0f;
 
 	// 현재 장비 중인 무기
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
 	TWeakObjectPtr<AWeaponActor> CurrentWeapon = nullptr;
 
 	// 현재 장비할 무기의 데이터 에셋(임시 : 무기 관리자로 넘길 예정)
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
 	TObjectPtr<UWeaponDataAsset> CurrentWeaponData = nullptr;
+
+	// 기본 무기의 데이터 에셋
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
+	TObjectPtr<UWeaponDataAsset> DefaultWeaponData = nullptr;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

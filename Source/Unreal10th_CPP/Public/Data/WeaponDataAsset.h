@@ -41,6 +41,14 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HitArea")
 	float HitAreaRadius = 30.0f;
 
+	// 무기 사용 회수
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponData")
+	int32 UseCount = 10;
+
+	// 무한 사용 가능 여부
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponData")
+	bool bInfinityUse = false;
+
 	// 무기의 공격력
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponData")
 	float AttackPower = 10.0f;

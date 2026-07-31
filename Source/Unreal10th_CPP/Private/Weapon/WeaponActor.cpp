@@ -50,6 +50,10 @@ void AWeaponActor::InitializeWeapon(UWeaponDataAsset* InData)
 	// HitArea크기 조정
 	HitArea->SetCapsuleHalfHeight(WeaponData->HitAreaHalfHeight);
 	HitArea->SetCapsuleRadius(WeaponData->HitAreaRadius);
+
+	// 사용 회수 설정
+	CurrentUseCount = WeaponData->UseCount;
+	UE_LOG(LogTemp, Log, TEXT("Current Use Count : %d"), CurrentUseCount);
 }
 
 void AWeaponActor::EquipToTarget(AActor* Target)
@@ -109,7 +113,27 @@ void AWeaponActor::DropWeapon()
 	// DropLifeSpan초 후에 이 액터 제거하기
 	SetLifeSpan(DropLifeSpan);
 
+	OnWeaponDrop.Unbind();
 	OwnerCharacter = nullptr;
+}
+
+void AWeaponActor::Use()
+{
+	if (WeaponData && !WeaponData->bInfinityUse)
+	{
+		CurrentUseCount--;
+		UE_LOG(LogTemp, Log, TEXT("Current Use Count : %d"), CurrentUseCount);
+		if (CurrentUseCount <= 0)
+		{
+			OnWeaponDrop.ExecuteIfBound(WeaponData);
+		}
+	}
+}
+
+void AWeaponActor::ResetUseCount()
+{
+	CurrentUseCount = WeaponData->UseCount;
+	UE_LOG(LogTemp, Log, TEXT("Current Use Count : %d"), CurrentUseCount);
 }
 
 // Called when the game starts or when spawned
