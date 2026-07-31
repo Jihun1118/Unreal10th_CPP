@@ -6,8 +6,11 @@
 #include "GameFramework/Actor.h"
 #include "WeaponActor.generated.h"
 
+DECLARE_DELEGATE_OneParam(FOnWeaponDrop, UWeaponDataAsset*);
+
 class ACharacter;
 class UCapsuleComponent;
+class UNiagaraComponent;
 
 UCLASS()
 class UNREAL10TH_CPP_API AWeaponActor : public AActor
@@ -26,6 +29,15 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void DropWeapon();
+
+	UFUNCTION(BlueprintCallable)
+	bool CanUse() const { return CurrentUseCount > 0; }
+
+	UFUNCTION(BlueprintCallable)
+	void Use();
+
+	UFUNCTION(BlueprintCallable)
+	void ResetUseCount();
 
 
 protected:
@@ -47,16 +59,26 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void AttackEnable(bool bEnable);
 
+public:
+	FOnWeaponDrop OnWeaponDrop;
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TObjectPtr<UStaticMeshComponent> Mesh = nullptr;
+	TObjectPtr<USkeletalMeshComponent> Mesh = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UCapsuleComponent> HitArea = nullptr;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UNiagaraComponent> TrailVFX = nullptr;
+
 	// 무기 데이터 에셋
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UWeaponDataAsset> WeaponData;
+
+	// 무기 사용 회수
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponData")
+	int32 CurrentUseCount = 1;
 
 	// 무기가 드랍 된 후 사라질 때까지의 시간
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

@@ -5,9 +5,10 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "Engine/StreamableManager.h"
+#include "NiagaraSystem.h"
 #include "WeaponDataAsset.generated.h"
 
-class UStaticMesh;
+class USkeletalMesh;
 /**
  * 
  */
@@ -23,7 +24,10 @@ public:
 public:
 	// 무기의 메시
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Appearance")
-	TSoftObjectPtr<UStaticMesh> Mesh;
+	TSoftObjectPtr<USkeletalMesh> Mesh;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Appearance")
+	TSoftObjectPtr<UNiagaraSystem> TrailVFX;
 
 	// 무기가 Attach될 소캣
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Appearance")
@@ -40,6 +44,14 @@ public:
 	// HitArea캡슐의 반지름
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HitArea")
 	float HitAreaRadius = 30.0f;
+
+	// 무기 사용 회수
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponData")
+	int32 UseCount = 10;
+
+	// 무한 사용 가능 여부
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponData")
+	bool bInfinityUse = false;
 
 	// 무기의 공격력
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponData")

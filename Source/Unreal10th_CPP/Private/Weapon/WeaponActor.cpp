@@ -9,6 +9,7 @@
 #include "GameFramework/Character.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "NiagaraComponent.h"
 
 // Sets default values
 AWeaponActor::AWeaponActor()
@@ -16,7 +17,7 @@ AWeaponActor::AWeaponActor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RootMesh"));
+	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("RootMesh"));
 	SetRootComponent(Mesh);
 	// Mesh->SetCollisionProfileName(TEXT("NoCollision"));	// 프로파일을 이용해 한번에 세팅(실제 적용되는 타이밍은 좀 뒤쪽이다)	
 	Mesh->SetGenerateOverlapEvents(false);
@@ -33,6 +34,9 @@ AWeaponActor::AWeaponActor()
 	HitArea->SetCollisionResponseToAllChannels(ECR_Ignore);
 	HitArea->SetCollisionResponseToChannel(ECC_Enemy, ECR_Overlap);
 	HitArea->SetRelativeLocation(FVector(0.0f, 0.0f, 40.0f));
+
+	TrailVFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("TrailVFX"));
+	TrailVFX->SetupAttachment(Mesh);
 }
 
 void AWeaponActor::InitializeWeapon(UWeaponDataAsset* InData)
@@ -43,13 +47,18 @@ void AWeaponActor::InitializeWeapon(UWeaponDataAsset* InData)
 	
 	if (WeaponData->IsLoaded())	// 로딩이 완료되었을 때만 처리
 	{
-		// 메시 설정
-		Mesh->SetStaticMesh(WeaponData->Mesh.Get());
+		// 에셋 설정
+		Mesh->SetSkeletalMesh(WeaponData->Mesh.Get());
+		TrailVFX->SetAsset(WeaponData->TrailVFX.Get());
 	}
 		
 	// HitArea크기 조정
 	HitArea->SetCapsuleHalfHeight(WeaponData->HitAreaHalfHeight);
 	HitArea->SetCapsuleRadius(WeaponData->HitAreaRadius);
+
+	// 사용 회수 설정
+	CurrentUseCount = WeaponData->UseCount;
+	UE_LOG(LogTemp, Log, TEXT("Current Use Count : %d"), CurrentUseCount);
 }
 
 void AWeaponActor::EquipToTarget(AActor* Target)
@@ -109,7 +118,27 @@ void AWeaponActor::DropWeapon()
 	// DropLifeSpan초 후에 이 액터 제거하기
 	SetLifeSpan(DropLifeSpan);
 
+	OnWeaponDrop.Unbind();
 	OwnerCharacter = nullptr;
+}
+
+void AWeaponActor::Use()
+{
+	if (WeaponData && !WeaponData->bInfinityUse)
+	{
+		CurrentUseCount--;
+		UE_LOG(LogTemp, Log, TEXT("Current Use Count : %d"), CurrentUseCount);
+		if (CurrentUseCount <= 0)
+		{
+			OnWeaponDrop.ExecuteIfBound(WeaponData);
+		}
+	}
+}
+
+void AWeaponActor::ResetUseCount()
+{
+	CurrentUseCount = WeaponData->UseCount;
+	UE_LOG(LogTemp, Log, TEXT("Current Use Count : %d"), CurrentUseCount);
 }
 
 // Called when the game starts or when spawned
