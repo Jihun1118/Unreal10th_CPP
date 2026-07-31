@@ -50,7 +50,7 @@ protected:
 	TObjectPtr<UCurveFloat> SpinCurve;
 
 	// 위아래로 왕복하는데 걸리는 시간
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effect|Default")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effect|Default", meta = (ClampMin = "0.001"))
 	float UpDownDuration = 2.0f;
 
 	// 위아래로 움직이는 거리

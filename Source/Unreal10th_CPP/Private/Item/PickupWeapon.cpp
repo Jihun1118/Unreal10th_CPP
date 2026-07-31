@@ -59,7 +59,8 @@ void APickupWeapon::OnUpdatePickupEffect()
 	}
 
 	PickupElapsedTime += TimerInterval;
-	float Progress = PickupElapsedTime / PickupEffectDuration;
+	float Div = FMath::Max(PickupEffectDuration, 0.001f);
+	float Progress = PickupElapsedTime / Div;
 
 	float DistanceAlpha = PickupAlpha->GetFloatValue(Progress);
 	FVector Goal = TargetActor.Get()->GetActorLocation();
@@ -83,7 +84,7 @@ void APickupWeapon::OnFinishPickupEffect()
 	GetWorldTimerManager().ClearTimer(PickupEffectTimerHandle);
 	if (TargetActor.IsValid())
 	{
-		IWeaponUserInterface::Execute_EqueipWeapon(TargetActor.Get(), WeaponData);
+		IWeaponUserInterface::Execute_EquipWeapon(TargetActor.Get(), WeaponData);
 	}
 	Destroy();
 }

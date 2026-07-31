@@ -36,19 +36,25 @@ float UStatComponent::GetMaxStamina_Implementation() const
 bool UStatComponent::ConsumeStamina_Implementation(float InAmount)
 {
 	bool bResult = false;
+	InAmount = FMath::Max(InAmount, 0.0f);	// 음수는 0으로 처리
+
 	if (CurrentStamina >= InAmount)
 	{
 		CurrentStamina -= InAmount;
-
-		FTimerManager& TimerManager = GetWorld()->GetTimerManager();
-		TimerManager.SetTimer(
-			StaminaAutoRecoveryTimerHandle,
-			this,
-			&UStatComponent::StaminaAutoRecovertyPerTick,
-			StaminaRecoveryData.TickInterval,
-			true,
-			StaminaRecoveryData.CoolTime
-		);
+				
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+			TimerManager.SetTimer(
+				StaminaAutoRecoveryTimerHandle,
+				this,
+				&UStatComponent::StaminaAutoRecovertyPerTick,
+				StaminaRecoveryData.TickInterval,
+				true,
+				StaminaRecoveryData.CoolTime
+			);
+		}
 
 		OnStaminaChange.Broadcast(CurrentStamina, MaxStamina);	// 블루프린트 디스패처 Call과 같다
 
@@ -71,6 +77,7 @@ void UStatComponent::StaminaAutoRecovertyPerTick()
 
 void UStatComponent::RecoveryStamina_Implementation(float InAmount)
 {
+	InAmount = FMath::Max(InAmount, 0.0f);	// 음수는 0으로 처리
 	CurrentStamina = FMath::Min(CurrentStamina + InAmount, MaxStamina);
 	OnStaminaChange.Broadcast(CurrentStamina, MaxStamina);
 	//UE_LOG(LogTemp, Log, TEXT("Stamina : %.1f / %.1f"), CurrentStamina, MaxStamina);
@@ -95,6 +102,7 @@ float UStatComponent::GetMaxHealth_Implementation() const
 
 void UStatComponent::DamageHealth_Implementation(float InAmount)
 {
+	InAmount = FMath::Max(InAmount, 0.0f);	// 음수는 0으로 처리
 	CurrentHealth -= InAmount;
 	if (CurrentHealth < 0.0f )
 	{
@@ -112,6 +120,7 @@ void UStatComponent::DamageHealth_Implementation(float InAmount)
 
 void UStatComponent::HealHealth_Implementation(float InAmount)
 {
+	InAmount = FMath::Max(InAmount, 0.0f);	// 음수는 0으로 처리
 	CurrentHealth = FMath::Min(CurrentHealth + InAmount, MaxHealth);
 	OnHealthChange.Broadcast(CurrentHealth, MaxHealth);
 	//UE_LOG(LogTemp, Log, TEXT("Health : %.1f / %.1f"), CurrentHealth, MaxHealth);

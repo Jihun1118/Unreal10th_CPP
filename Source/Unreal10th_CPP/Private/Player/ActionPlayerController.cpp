@@ -18,9 +18,11 @@ void AActionPlayerController::BeginPlay()
 	{
 		SubSystem->AddMappingContext(DefaultMappingContext, GameInputPriority);
 	}
-
-	PlayerCameraManager->ViewPitchMax = ViewPicthMax;
-	PlayerCameraManager->ViewPitchMin = ViewPicthMin;
+	if (PlayerCameraManager)
+	{
+		PlayerCameraManager->ViewPitchMax = ViewPicthMax;
+		PlayerCameraManager->ViewPitchMin = ViewPicthMin;
+	}
 }
 
 void AActionPlayerController::SetupInputComponent()
