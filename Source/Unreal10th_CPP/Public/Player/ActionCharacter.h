@@ -27,7 +27,7 @@ public:
 	AActionCharacter();	
 
 	// 무기 장비 함수들
-	virtual void EqueipWeapon_Implementation(UWeaponDataAsset* InWeaponData) override;
+	virtual void EquipWeapon_Implementation(UWeaponDataAsset* InWeaponData) override;
 	//void UnEquipWeapon();
 
 	// 이벤트 함수

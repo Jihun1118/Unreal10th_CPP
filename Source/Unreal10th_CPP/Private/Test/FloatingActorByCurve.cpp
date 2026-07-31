@@ -7,7 +7,8 @@ void AFloatingActorByCurve::UpdateFloatingMesh()
 {
 	if (HeightCurve)
 	{
-		float CurveInput = FMath::Fmod(GetElapsedTime() / Duration, 1.0f);
+		float Div = FMath::Max(Duration, 0.001f);
+		float CurveInput = FMath::Fmod(GetElapsedTime() / Div, 1.0f);
 		float CurveValue = HeightCurve->GetFloatValue(CurveInput);
 		
 		Mesh->SetRelativeLocation(FVector(0, 0, GetHeightOffset() + CurveValue * MoveHeight));

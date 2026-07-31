@@ -38,7 +38,8 @@ void AFloatingActor::Tick(float DeltaTime)
 
 void AFloatingActor::UpdateFloatingMesh()
 {		
-	float InCos = ElapsedTime * UE_PI * 2 / Duration;
+	float Div = FMath::Max(Duration, 0.001f);
+	float InCos = ElapsedTime * UE_PI * 2 / Div;
 	float CosValue = FMath::Cos(InCos);			// 1 -> 0 -> -1 -> 0 -> 1 -> ...
 	CosValue += 1;								// 2 -> 1 -> 0 -> 1 -> 2 -> ...
 	CosValue *= 0.5f;							// 1 -> 0.5 -> 0 -> 0.5 -> 1 -> ...

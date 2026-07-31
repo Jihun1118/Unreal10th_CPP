@@ -22,6 +22,9 @@ APickupBase::APickupBase()
 
 	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("VFX"));
 	NiagaraComponent->SetupAttachment(SphereCollision);
+	//NiagaraComponent->Activate();	// 이 나이아가라 컴포넌트가 가지고 있는 나이아가라 에셋을 재생
+	//NiagaraComponent->Deactivate();	// 이 나이아가라 컴포넌트가 가지고 있는 나이아가라 에셋을 재생 중지
+
 }
 
 // Called when the game starts or when spawned
@@ -50,7 +53,8 @@ void APickupBase::NotifyActorBeginOverlap(AActor* OtherActor)
 
 void APickupBase::OnPickup(AActor* InTarget)
 {
-	UE_LOG(LogTemp, Log, TEXT("%s가 %s를 획득했습니다."), *InTarget->GetName(), *this->GetName());
+	UE_LOG(LogTemp, Log, TEXT("%s(이)가 %s를 획득했습니다."), 
+		InTarget ? *InTarget->GetName() : TEXT("알 수 없는 대상"), *this->GetName());
 	bIdle = false;
 }
 
@@ -60,7 +64,8 @@ void APickupBase::OnUpdateUpdownSpin(float InDeltaTime)
 
 	ElapsedTime += InDeltaTime;
 
-	float Progress = FMath::Fmod(ElapsedTime / UpDownDuration, 1.0f);
+	float Div = FMath::Max(UpDownDuration, 0.001f);
+	float Progress = FMath::Fmod(ElapsedTime / Div, 1.0f);
 	FVector NewMeshLocation = MeshBaseLocation;
 	NewMeshLocation.Z += UpDownCurve->GetFloatValue(Progress) * UpDownHeight;
 

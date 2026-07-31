@@ -28,7 +28,7 @@ AWeaponActor::AWeaponActor()
 	HitArea->SetupAttachment(Mesh);
 	HitArea->SetCapsuleHalfHeight(60.0f, false);
 	HitArea->SetCapsuleRadius(30.0f, false);
-	HitArea->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	HitArea->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	HitArea->SetCollisionObjectType(ECC_Weapon);
 	HitArea->SetCollisionResponseToAllChannels(ECR_Ignore);
 	HitArea->SetCollisionResponseToChannel(ECC_Enemy, ECR_Overlap);
@@ -41,8 +41,11 @@ void AWeaponActor::InitializeWeapon(UWeaponDataAsset* InData)
 
 	WeaponData = InData;
 	
-	// 메시 설정
-	Mesh->SetStaticMesh(WeaponData->Mesh.Get());
+	if (WeaponData->IsLoaded())	// 로딩이 완료되었을 때만 처리
+	{
+		// 메시 설정
+		Mesh->SetStaticMesh(WeaponData->Mesh.Get());
+	}
 		
 	// HitArea크기 조정
 	HitArea->SetCapsuleHalfHeight(WeaponData->HitAreaHalfHeight);
@@ -56,6 +59,12 @@ void AWeaponActor::EquipToTarget(AActor* Target)
 
 void AWeaponActor::DropWeapon()
 {
+	IWeaponUserInterface* WeaponUser = Cast<IWeaponUserInterface>(OwnerCharacter);
+	if (WeaponUser)
+	{
+		WeaponUser->GetWeaponAttackStateChangedDelegate().Clear();
+	}
+
 	FDetachmentTransformRules DetachRules(EDetachmentRule::KeepWorld, true);
 	DetachFromActor(DetachRules);
 
@@ -72,7 +81,8 @@ void AWeaponActor::DropWeapon()
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
 	TimerManager.SetTimer(
 		PhysicsDelayTimerHandle,
-		FTimerDelegate::CreateLambda(
+		FTimerDelegate::CreateWeakLambda(
+			this,
 			[this]()
 			{
 				Mesh->SetCollisionResponseToChannel(ECC_Player, ECollisionResponse::ECR_Block);
@@ -83,7 +93,12 @@ void AWeaponActor::DropWeapon()
 	);
 
 	// 뒤로 던지기
-	FVector BackwardDirection = -OwnerCharacter->GetActorForwardVector();
+	FVector BackwardDirection = FVector::BackwardVector;
+	if (OwnerCharacter.IsValid())
+	{
+		BackwardDirection = -OwnerCharacter->GetActorForwardVector();
+	} 
+
 	FVector ThrowDirection = BackwardDirection * 300.0f + FVector::UpVector * 200.0f;
 	Mesh->AddImpulse(ThrowDirection, NAME_None, true);
 	FVector AngularImpulse = FVector(
@@ -138,6 +153,8 @@ void AWeaponActor::OnEquipped(AActor* InOwner)
 
 void AWeaponActor::OnHitAreaBeginOverlap(UPrimitiveComponent* InOverlappedComponent, AActor* InOtherActor, UPrimitiveComponent* InOtherComp, int32 InOtherBodyIndex, bool bFromSweep, const FHitResult& InSweepResult)
 {
+	if (!OwnerCharacter.IsValid() || !InOtherActor) return;
+
 	float Damage = WeaponData ? WeaponData->AttackPower : 1;	
 
 	UE_LOG(LogTemp, Log, TEXT("오버랩 된 대상 : %s"), *InOtherActor->GetName());

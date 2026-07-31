@@ -7,7 +7,8 @@
 
 void UResourceBarWidget::UpdateResourceBar(float InCurrent, float InMax)
 {
-	Bar->SetPercent(InCurrent / InMax);
+	float Div = FMath::Max(InMax, 0.001f);
+	Bar->SetPercent(InCurrent / Div);
 	CurrentText->SetText(FText::AsNumber(FMath::FloorToInt(InCurrent)));
 	MaxText->SetText(FText::AsNumber(FMath::FloorToInt(InMax)));
 }

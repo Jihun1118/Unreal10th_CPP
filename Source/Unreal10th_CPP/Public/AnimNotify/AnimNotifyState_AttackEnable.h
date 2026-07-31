@@ -27,6 +27,4 @@ protected:
 		UAnimSequenceBase* Animation,
 		const FAnimNotifyEventReference& EventReference) override;
 
-private:
-	IWeaponUserInterface* WeaponOwner = nullptr;
 };

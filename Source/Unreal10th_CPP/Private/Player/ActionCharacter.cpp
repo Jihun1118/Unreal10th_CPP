@@ -32,7 +32,7 @@ AActionCharacter::AActionCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;	// 캐릭터 이동방향으로 바라보게 만들기
 }
 
-void AActionCharacter::EqueipWeapon_Implementation(UWeaponDataAsset* InWeaponData)
+void AActionCharacter::EquipWeapon_Implementation(UWeaponDataAsset* InWeaponData)
 {
 	// 이전 무기 해제하기
 	if (CurrentWeapon.IsValid())
@@ -43,26 +43,31 @@ void AActionCharacter::EqueipWeapon_Implementation(UWeaponDataAsset* InWeaponDat
 
 	// 새 무기 장비하기
 	CurrentWeaponData = InWeaponData;
-	if (!InWeaponData->IsLoaded())
+	if (CurrentWeaponData)	// null일때는 장비 안함
 	{
-		UWeaponDataAsset* RequestedData = InWeaponData;
-		InWeaponData->RequestDataLoad(
-			FStreamableDelegate::CreateWeakLambda(
-				this, 
-				[this, RequestedData]()
-				{
-					// 로딩이 완료되면 실행되는 람다 함수					
-					if (CurrentWeaponData == RequestedData)
+		if (!CurrentWeaponData->IsLoaded())
+		{
+			// 데이터가 로딩 안되었으면 로딩 요청
+			UWeaponDataAsset* RequestedData = CurrentWeaponData;
+			CurrentWeaponData->RequestDataLoad(
+				FStreamableDelegate::CreateWeakLambda(
+					this, 
+					[this, RequestedData]()
 					{
-						// 중복으로 로딩 요청했을 때를 대비
-						SpawnWeaponActor();
-					}
-				})
-		);		
-	}
-	else
-	{
-		SpawnWeaponActor();
+						// 로딩이 완료되면 실행되는 람다 함수					
+						if (CurrentWeaponData == RequestedData)
+						{
+							// 중복으로 로딩 요청했을 때를 대비
+							SpawnWeaponActor();
+						}
+					})
+			);		
+		}
+		else
+		{
+			// 로딩 된 상황이면 즉시 스폰하고 장비
+			SpawnWeaponActor();
+		}
 	}
 
 	
@@ -194,8 +199,9 @@ float AActionCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	if (UStatComponent* StatComp = GetStatComponent())
 	{
 		IHealthInterface::Execute_DamageHealth(StatComp, Damage);
-
-		UE_LOG(LogTemp, Log, TEXT("%.1f 데미지를 입었습니다. (공격자:%s)"), Damage, *EventInstigator->GetName());
+		
+		UE_LOG(LogTemp, Log, TEXT("%.1f 데미지를 입었습니다. (공격자:%s)"), Damage, 
+			EventInstigator ? *EventInstigator->GetName() : TEXT("알 수 없음"));
 	}
 
 	return Damage;

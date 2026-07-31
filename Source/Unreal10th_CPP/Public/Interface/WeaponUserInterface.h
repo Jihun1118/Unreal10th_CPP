@@ -28,5 +28,5 @@ public:
 	virtual FOnWeaponAttackStateChanged& GetWeaponAttackStateChangedDelegate() = 0;
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void EqueipWeapon(UWeaponDataAsset* InWeaponData);
+	void EquipWeapon(UWeaponDataAsset* InWeaponData);
 };
