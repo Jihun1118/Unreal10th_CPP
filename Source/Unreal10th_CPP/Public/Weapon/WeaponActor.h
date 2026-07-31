@@ -10,6 +10,7 @@ DECLARE_DELEGATE_OneParam(FOnWeaponDrop, UWeaponDataAsset*);
 
 class ACharacter;
 class UCapsuleComponent;
+class UNiagaraComponent;
 
 UCLASS()
 class UNREAL10TH_CPP_API AWeaponActor : public AActor
@@ -67,6 +68,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UCapsuleComponent> HitArea = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UNiagaraComponent> TrailVFX = nullptr;
 
 	// 무기 데이터 에셋
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

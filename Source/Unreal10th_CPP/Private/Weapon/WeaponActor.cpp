@@ -9,6 +9,7 @@
 #include "GameFramework/Character.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "NiagaraComponent.h"
 
 // Sets default values
 AWeaponActor::AWeaponActor()
@@ -33,6 +34,9 @@ AWeaponActor::AWeaponActor()
 	HitArea->SetCollisionResponseToAllChannels(ECR_Ignore);
 	HitArea->SetCollisionResponseToChannel(ECC_Enemy, ECR_Overlap);
 	HitArea->SetRelativeLocation(FVector(0.0f, 0.0f, 40.0f));
+
+	TrailVFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("TrailVFX"));
+	TrailVFX->SetupAttachment(Mesh);
 }
 
 void AWeaponActor::InitializeWeapon(UWeaponDataAsset* InData)
