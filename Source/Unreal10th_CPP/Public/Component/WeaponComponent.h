@@ -22,12 +22,18 @@ public:
 	// Sets default values for this component's properties
 	UWeaponComponent();
 
+	// 무기 장비 처리
 	void EquipWeapon(UWeaponDataAsset* InWeaponData);
+	
+	// 공격 처리 함수(리턴값은 공격을 했는지 여부)
+	bool Attack();
+
+	// 범위 공격 처리 함수
+	void AreaAttack();
+
 
 	// 이벤트 함수들 ---------------------------------------------------------------------------------
-	// 공격 처리 함수(리턴값은 공격을 했는지 여부)
-	bool OnAttack();
-
+	
 	// 무기를 다 사용하여 드랍되었을 때 실행될 함수(웨폰 액터 쪽에서 바인딩)
 	void OnWeaponDrop(UWeaponDataAsset* InDropWeaponData);
 
