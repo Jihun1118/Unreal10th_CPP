@@ -57,4 +57,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponData")
 	float AttackPower = 10.0f;
 
+	// 무기의 공격 애니메이션 몽타주
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WeaponData")
+	TObjectPtr<UAnimMontage> AttackMontage;
+
 };
