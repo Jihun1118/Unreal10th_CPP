@@ -68,10 +68,12 @@ void AWeaponActor::EquipToTarget(AActor* Target)
 
 void AWeaponActor::DropWeapon()
 {
-	IWeaponUserInterface* WeaponUser = Cast<IWeaponUserInterface>(OwnerCharacter);
-	if (WeaponUser)
+	if (IWeaponUserInterface* WeaponUser = Cast<IWeaponUserInterface>(OwnerCharacter))
 	{
-		WeaponUser->GetWeaponAttackStateChangedDelegate().Clear();
+		if (UWeaponComponent* WeaponComp = WeaponUser->GetWeaponComponent())
+		{
+			WeaponComp->OnWeaponAttackStateChanged.Clear();
+		}
 	}
 
 	FDetachmentTransformRules DetachRules(EDetachmentRule::KeepWorld, true);
@@ -173,10 +175,12 @@ void AWeaponActor::OnEquipped(AActor* InOwner)
 
 		HitArea->IgnoreActorWhenMoving(OwnerCharacter.Get(), true);	// 만약을 대비한 것
 
-		IWeaponUserInterface* WeaponUser = Cast<IWeaponUserInterface>(OwnerCharacter);
-		if (WeaponUser)
+		if (IWeaponUserInterface* WeaponUser = Cast<IWeaponUserInterface>(OwnerCharacter))
 		{
-			WeaponUser->GetWeaponAttackStateChangedDelegate().BindUFunction(this, FName("AttackEnable"));
+			if (UWeaponComponent* WeaponComp = WeaponUser->GetWeaponComponent())
+			{
+				WeaponComp->OnWeaponAttackStateChanged.BindUFunction(this, FName("AttackEnable"));
+			}
 		}
 	}
 }

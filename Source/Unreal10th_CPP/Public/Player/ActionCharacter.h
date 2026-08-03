@@ -13,8 +13,9 @@ class UInputAction;
 class USpringArmComponent;
 class UCameraComponent;
 class UStatComponent;
+class UWeaponComponent;
 class UAnimNotifyState_SectionJump;
-class AWeaponActor;
+//class AWeaponActor;
 class UWeaponDataAsset;
 
 UCLASS()
@@ -25,24 +26,33 @@ class UNREAL10TH_CPP_API AActionCharacter : public ACharacter, public IStatInter
 public:
 	// Sets default values for this character's properties
 	AActionCharacter();	
-
-	// 무기 장비 관련 함수들
-	virtual void EquipWeapon_Implementation(UWeaponDataAsset* InWeaponData) override;
-	//void UnEquipWeapon();
-	void OnWeaponDrop(UWeaponDataAsset* InDropWeaponData);	// 무기를 다 사용하여 드랍되었을 때 실행될 함수
-
+		
 	// 이벤트 함수
-	virtual void OnWeaponAttackState(bool bEnable) override;	// 무기 공격 활성화/비활성화 때 실행되는 함수
+	//virtual void OnWeaponAttackState(bool bEnable) override;	// 무기 공격 활성화/비활성화 때 실행되는 함수
 
 	// Getter / Setter들
 	UFUNCTION(BlueprintCallable, Category = "Stat")
 	virtual UStatComponent* GetStatComponent() const override;
 
-	virtual FOnWeaponAttackStateChanged& GetWeaponAttackStateChangedDelegate() override {
-		return OnOnWeaponAttackStateChanged;
-	};
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	virtual UWeaponComponent* GetWeaponComponent() const override;
 
-	void SetSectionJumpNotify(UAnimNotifyState_SectionJump* InSectionJunpNotify);
+	//virtual FOnWeaponAttackStateChanged& GetWeaponAttackStateChangedDelegate() override {
+	//	return OnWeaponAttackStateChanged;
+	//};
+
+	// WeaponComponent로 전달할 함수들 ---------------------------------------------------------------
+	// 무기 장비 관련 함수들
+	virtual void EquipWeapon_Implementation(UWeaponDataAsset* InWeaponData) override;
+	//void UnEquipWeapon();
+
+	//// 무기를 다 사용하여 드랍되었을 때 실행될 함수(웨폰 액터 쪽에서 바인딩)
+	//void OnWeaponDrop(UWeaponDataAsset* InDropWeaponData);	
+
+	// 섹션 점프를 위한 노티파이를 설정하는 함수(WeaponComponent에 데이터 전달용)
+	//void SetSectionJumpNotify(UAnimNotifyState_SectionJump* InSectionJunpNotify);
+	//-------------------------------------------------------------------------------------------------
+	
 
 protected:
 	// Called when the game starts or when spawned
@@ -67,15 +77,15 @@ protected:
 private:
 	void SpendSprintStamina(float DeltaTime);
 
-	void SectionJumpForCombo();	// 콤보용으로 섹션 점프하는 함수
+	//void SectionJumpForCombo();	// 콤보용으로 섹션 점프하는 함수
 
-	void SpawnWeaponActorAndEquip();
+	//void SpawnWeaponActorAndEquip();
 
-	// 공격 몽타주가 끝났을 때 실행될 함수
-	void OnAttackEnded(UAnimMontage* InMontage, bool bInterrupted);
+	//// 공격 몽타주가 끝났을 때 실행될 함수
+	//void OnAttackEnded(UAnimMontage* InMontage, bool bInterrupted);
 
-public:
-	FOnWeaponAttackStateChanged OnOnWeaponAttackStateChanged;
+//public:
+//	FOnWeaponAttackStateChanged OnOnWeaponAttackStateChanged;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -95,9 +105,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Action Anims")
 	TObjectPtr<UAnimMontage> RollMontage;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Action Anims")
-	TObjectPtr<UAnimMontage> AttackMontage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Move")
 	float SprintSpeed = 1200;
@@ -133,20 +140,18 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
 	float AttackCost = 5.0f;
 
-	// 현재 장비 중인 무기
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
-	TWeakObjectPtr<AWeaponActor> CurrentWeapon = nullptr;
+	//// 현재 장비 중인 무기
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+	//TWeakObjectPtr<AWeaponActor> CurrentWeapon = nullptr;
 
-	// 현재 장비할 무기의 데이터 에셋(임시 : 무기 관리자로 넘길 예정)
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
-	TObjectPtr<UWeaponDataAsset> CurrentWeaponData = nullptr;
+	//// 현재 장비할 무기의 데이터 에셋(임시 : 무기 관리자로 넘길 예정)
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+	//TObjectPtr<UWeaponDataAsset> CurrentWeaponData = nullptr;
 
-	// 기본 무기의 데이터 에셋
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
-	TObjectPtr<UWeaponDataAsset> DefaultWeaponData = nullptr;
-
+	//// 기본 무기의 데이터 에셋
 	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
-	//TSubclassOf<AWeaponActor> BaseWeaponType = nullptr;
+	//TObjectPtr<UWeaponDataAsset> DefaultWeaponData = nullptr;
+
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -158,15 +163,18 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UStatComponent> StatComponent = nullptr;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UWeaponComponent> WeaponComponent = nullptr;
+
 private:
 	UPROPERTY()
 	TObjectPtr<UAnimInstance> AnimInstance = nullptr;
 
 	bool bSprintMode = false;
 
-	// 발생한 콤보 노티파이를 저장해 놓는 변수
-	TWeakObjectPtr<UAnimNotifyState_SectionJump> SectionJumpNotify = nullptr;
-	
-	// 현재 콤보가 가능한지 확인하기 위한 변수
-	bool bComboReady = false;
+	//// 발생한 콤보 노티파이를 저장해 놓는 변수
+	//TWeakObjectPtr<UAnimNotifyState_SectionJump> SectionJumpNotify = nullptr;
+	//
+	//// 현재 콤보가 가능한지 확인하기 위한 변수
+	//bool bComboReady = false;
 };
