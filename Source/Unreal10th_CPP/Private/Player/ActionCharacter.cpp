@@ -168,7 +168,7 @@ void AActionCharacter::OnAttackAction(const FInputActionValue& Value)
 		&& IStaminaInterface::Execute_GetCurrentStamina(GetStatComponent()) > AttackCost
 		&& (GetWeaponComponent() && GetWeaponComponent()->CanWeaponUse()))
 	{
-		bool bAttack = GetWeaponComponent()->OnAttack();
+		bool bAttack = GetWeaponComponent()->Attack();
 		if (bAttack)
 		{
 			IStaminaInterface::Execute_ConsumeStamina(GetStatComponent(), AttackCost);

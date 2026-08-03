@@ -39,6 +39,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ResetUseCount();
 
+	UFUNCTION(BlueprintCallable)
+	FVector GetWeaponImpactLocation() const;
+
 
 protected:
 	// Called when the game starts or when spawned

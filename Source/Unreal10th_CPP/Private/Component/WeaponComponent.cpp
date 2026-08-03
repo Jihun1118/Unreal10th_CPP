@@ -2,6 +2,7 @@
 
 
 #include "Component/WeaponComponent.h"
+#include "Unreal10th_CPP/Unreal10th_CPP.h"
 #include "Interface/WeaponUserInterface.h"
 #include "Weapon/WeaponActor.h"
 #include "Data/WeaponDataAsset.h"
@@ -9,6 +10,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
+#include "NiagaraFunctionLibrary.h"
 
 // Sets default values for this component's properties
 UWeaponComponent::UWeaponComponent()
@@ -101,7 +103,7 @@ void UWeaponComponent::EquipWeapon(UWeaponDataAsset* InWeaponData)
 	}
 }
 
-bool UWeaponComponent::OnAttack()
+bool UWeaponComponent::Attack()
 {
 	if (!OwnerCharacter.IsValid() || !OwnerAnimInstance.IsValid()) return false;
 
@@ -123,6 +125,50 @@ bool UWeaponComponent::OnAttack()
 		bResult = SectionJumpForCombo();
 	}
 	return bResult;
+}
+
+void UWeaponComponent::AreaAttack()
+{
+	if (!CurrentWeapon.IsValid() || !CurrentWeaponData || !OwnerCharacter.IsValid() ) return;
+
+	// 디버그 정보 출력
+	DrawDebugSphere(
+		GetWorld(),
+		CurrentWeapon->GetWeaponImpactLocation(),
+		CurrentWeaponData->AreaAttackInnerRadius,
+		12,
+		FColor::Red,
+		false,
+		5.0f
+	);
+	DrawDebugSphere(
+		GetWorld(),
+		CurrentWeapon->GetWeaponImpactLocation(),
+		CurrentWeaponData->AreaAttackOutterRadius,
+		12,
+		FColor::Yellow,
+		false,
+		5.0f
+	);
+
+
+	//UNiagaraFunctionLibrary::SpawnSystemAtLocation()
+
+	TArray<AActor*> IgnoreActors = { CurrentWeapon.Get(), OwnerCharacter.Get() };
+	UGameplayStatics::ApplyRadialDamageWithFalloff(
+		GetWorld(),
+		CurrentWeaponData->AreaAttackPower,
+		1,
+		CurrentWeapon->GetWeaponImpactLocation(),
+		CurrentWeaponData->AreaAttackInnerRadius,
+		CurrentWeaponData->AreaAttackOutterRadius,
+		1.0f,	// 1일때(거리에 정비례해서 감소), 0에 가까워 질 때(위로 볼록한 그래프), 1보다 커질 때(아래로 오목한 그래프)
+		nullptr,
+		IgnoreActors,
+		CurrentWeapon.Get(),
+		OwnerCharacter.Get()->GetController(),
+		ECC_Enemy);
+
 }
 
 void UWeaponComponent::OnWeaponDrop(UWeaponDataAsset* InDropWeaponData)

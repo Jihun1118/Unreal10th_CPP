@@ -143,6 +143,11 @@ void AWeaponActor::ResetUseCount()
 	UE_LOG(LogTemp, Log, TEXT("Current Use Count : %d"), CurrentUseCount);
 }
 
+FVector AWeaponActor::GetWeaponImpactLocation() const
+{	
+	return FMath::Lerp(Mesh->GetSocketLocation(TEXT("Tip")), Mesh->GetSocketLocation(TEXT("Base")), 0.5f);
+}
+
 // Called when the game starts or when spawned
 void AWeaponActor::BeginPlay()
 {
