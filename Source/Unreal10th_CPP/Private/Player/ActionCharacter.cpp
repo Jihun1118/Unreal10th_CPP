@@ -89,8 +89,8 @@ UStatComponent* AActionCharacter::GetStatComponent() const
 
 void AActionCharacter::OnWeaponAttackState(bool bEnable)
 {
-	//OnOnWeaponAttackStateChanged.Execute(bEnable);
 	OnOnWeaponAttackStateChanged.ExecuteIfBound(bEnable);
+	//OnOnWeaponAttackStateChanged.Execute(bEnable);
 }
 
 void AActionCharacter::OnWeaponDrop(UWeaponDataAsset* InDropWeaponData)

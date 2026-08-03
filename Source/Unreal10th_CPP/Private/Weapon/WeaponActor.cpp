@@ -146,6 +146,7 @@ void AWeaponActor::BeginPlay()
 {
 	Super::BeginPlay();
 	HitArea->OnComponentBeginOverlap.AddDynamic(this, &AWeaponActor::OnHitAreaBeginOverlap);
+	TrailVFX->Deactivate();
 }
 
 void AWeaponActor::OnEquipped(AActor* InOwner)
@@ -196,9 +197,11 @@ void AWeaponActor::AttackEnable(bool bEnable)
 	if (bEnable)
 	{
 		HitArea->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		TrailVFX->Activate();
 	}
 	else
 	{
 		HitArea->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		TrailVFX->Deactivate();
 	}
 }
