@@ -36,12 +36,6 @@ public:
 	// ----------------------------------------------------------------------------------------------
 
 	// Getter/Setter --------------------------------------------------------------------------------
-	// 무기 공격 활성화/비활성화 델리게이트 Getter
-	//FOnWeaponAttackStateChanged& GetWeaponAttackStateChangedDelegate() 
-	//{
-	//	return OnWeaponAttackStateChanged;
-	//};
-
 	// 무기를 사용할 수 있는지 확인하는 Getter
 	bool CanWeaponUse();
 
@@ -80,10 +74,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
 	TObjectPtr<UWeaponDataAsset> CurrentWeaponData = nullptr;
 
-	//// 기본 무기의 액터
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
-	//TWeakObjectPtr<AWeaponActor> DefaultWeapon = nullptr;
-
 	// 기본 무기의 데이터 에셋
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
 	TObjectPtr<UWeaponDataAsset> DefaultWeaponData = nullptr;
@@ -97,9 +87,6 @@ private:
 
 	// 이 컴포넌트가 붙어있는 캐릭터
 	TWeakObjectPtr<ACharacter> OwnerCharacter = nullptr;
-
-	//// OwnerCharacter를 IWeaponUserInterface로 캐스팅한 결과(OwnerCharacter와 WeaponUser는 같은 것이 기본 전제)
-	//TWeakObjectPtr<IWeaponUserInterface> WeaponUser = nullptr;
 
 	// OwnerCharacter의 AnimInstance
 	TWeakObjectPtr<UAnimInstance> OwnerAnimInstance = nullptr;

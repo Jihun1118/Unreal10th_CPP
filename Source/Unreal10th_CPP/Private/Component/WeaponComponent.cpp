@@ -27,7 +27,6 @@ void UWeaponComponent::BeginPlay()
 
 	// ...
 	OwnerCharacter = Cast<ACharacter>(GetOwner());
-	//WeaponUser = Cast<IWeaponUserInterface>(OwnerCharacter);
 
 	if (OwnerCharacter.IsValid())
 	{

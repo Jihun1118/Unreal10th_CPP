@@ -25,10 +25,7 @@ class UNREAL10TH_CPP_API IWeaponUserInterface
 public:
 
 	virtual UWeaponComponent* GetWeaponComponent() const = 0;
-
-	//virtual void OnWeaponAttackState(bool bEnable) = 0;
-	//virtual FOnWeaponAttackStateChanged& GetWeaponAttackStateChangedDelegate() = 0;
-	
+		
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void EquipWeapon(UWeaponDataAsset* InWeaponData);
 };
