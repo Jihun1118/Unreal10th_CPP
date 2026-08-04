@@ -30,6 +30,7 @@ void ADamagePopupActor::OnPopupStart(float InDamage)
 
 void ADamagePopupActor::UseFinish()
 {
+	UE_LOG(LogTemp, Log, TEXT("UseFinish"));
 	if (UGameInstance* GameInstance = GetGameInstance())
 	{
 		UObjectPoolSubsystem* SubSystem = GameInstance->GetSubsystem<UObjectPoolSubsystem>();
@@ -41,7 +42,14 @@ void ADamagePopupActor::OnSpawn_Implementation()
 {
 	SetActorHiddenInGame(false);
 	//SetActorTickEnabled()
-	//SetActorEnableCollision()
+	//SetActorEnableCollision()	
+
+	//FTimerHandle TimerHandle;
+	//GetWorldTimerManager().SetTimer(
+	//	TimerHandle,
+	//	this,
+	//	&ADamagePopupActor::UseFinish,
+	//	LifeTime);
 }
 
 void ADamagePopupActor::OnReturn_Implementation()

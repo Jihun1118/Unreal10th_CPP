@@ -29,7 +29,10 @@ protected:
 		AActor* DamageCauser) override;
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UStaticMeshComponent> Mesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USceneComponent> PopupTransform;
 
 };
