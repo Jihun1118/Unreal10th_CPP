@@ -3,6 +3,7 @@
 
 #include "Test/DummyEnemyActor.h"
 #include "Framework/SubSystem/ObjectPoolSubsystem.h"
+#include "Enemy/DamagePopupActor.h"
 
 // Sets default values
 ADummyEnemyActor::ADummyEnemyActor()
@@ -39,7 +40,9 @@ float ADummyEnemyActor::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	if (UGameInstance* GameInstance = GetGameInstance())
 	{
 		UObjectPoolSubsystem* SubSystem = GameInstance->GetSubsystem<UObjectPoolSubsystem>();
-		SubSystem->Spawn(PopupTransform->GetComponentTransform());
+		AActor* SpawnedActor = SubSystem->Spawn(PopupTransform->GetComponentTransform());
+		ADamagePopupActor* DamagePopup = Cast<ADamagePopupActor>(SpawnedActor);
+		DamagePopup->OnPopupStart(Damage);
 	}
 
 	return Damage;

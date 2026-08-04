@@ -40,6 +40,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> DamagePopupWidgetComponent;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float LifeTime = 1.5f;
+
 private:
 	TObjectPtr<UDamagePopupWidget> DamagePopupWidget = nullptr;
 

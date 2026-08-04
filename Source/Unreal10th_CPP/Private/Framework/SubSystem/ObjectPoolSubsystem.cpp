@@ -26,6 +26,8 @@ AActor* UObjectPoolSubsystem::Spawn(const FTransform& InTransform)
 	if (ReadyActors.Num() > 0)
 	{
 		Spawned = ReadyActors.Pop();	// 뒤에서 꺼내기
+		Spawned->SetActorTransform(InTransform);
+		UE_LOG(LogTemp, Log, TEXT("Spawn(Reuse) : %s"), Spawned  ? *Spawned->GetName() : TEXT("None"));
 	}
 	else
 	{
@@ -36,6 +38,7 @@ AActor* UObjectPoolSubsystem::Spawn(const FTransform& InTransform)
 			SpawnParam.ObjectFlags = RF_Transient;
 
 			Spawned = GetWorld()->SpawnActor<AActor>(DamagePopupClass, InTransform, SpawnParam);
+			UE_LOG(LogTemp, Log, TEXT("Spawn(New) : %s"), Spawned ? *Spawned->GetName() : TEXT("None"));
 #if WITH_EDITOR
 			if (Spawned)
 			{
@@ -49,6 +52,7 @@ AActor* UObjectPoolSubsystem::Spawn(const FTransform& InTransform)
 	{
 		if (Spawned->GetClass()->ImplementsInterface(UPoolableInterface::StaticClass()))
 		{
+			//UE_LOG(LogTemp, Log, TEXT("OnSpawn"));
 			IPoolableInterface::Execute_OnSpawn(Spawned);
 		}
 
@@ -61,6 +65,9 @@ AActor* UObjectPoolSubsystem::Spawn(const FTransform& InTransform)
 void UObjectPoolSubsystem::ReturnPool(AActor* InActor)
 {
 	if (!InActor) return;
+	if (!ActiveActors.Contains(InActor)) return;
+
+	UE_LOG(LogTemp, Log, TEXT("Return : %s"), InActor ? *InActor->GetName() : TEXT("None"));
 
 	if (InActor->GetClass()->ImplementsInterface(UPoolableInterface::StaticClass()))
 	{

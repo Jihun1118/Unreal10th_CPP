@@ -16,10 +16,12 @@ void UDamagePopupWidget::PlayPopupAnimation()
 
 void UDamagePopupWidget::OnAnimationFinished_Implementation(const UWidgetAnimation* Animation)
 {
+	//UE_LOG(LogTemp, Log, TEXT("OnAnimationFinished"));
 	Super::OnAnimationFinished_Implementation(Animation);
 
 	if (Animation == PopupAnimation)
 	{
+		//UE_LOG(LogTemp, Log, TEXT("OnAnimationFinished : PopupAnimation"));
 		// 팝업 애니메이션이 종료됨
 		OnPopUpAnimationFinished.ExecuteIfBound();
 	}
