@@ -3,6 +3,7 @@
 
 #include "Framework/SubSystem/ObjectPoolSubsystem.h"
 #include "Config/ObjectPoolSettings.h"
+#include "Interface/PoolableInterface.h"
 
 void UObjectPoolSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -46,6 +47,11 @@ AActor* UObjectPoolSubsystem::Spawn(const FTransform& InTransform)
 
 	if (Spawned)
 	{
+		if (Spawned->GetClass()->ImplementsInterface(UPoolableInterface::StaticClass()))
+		{
+			IPoolableInterface::Execute_OnSpawn(Spawned);
+		}
+
 		ActiveActors.Add(Spawned);
 	}
 
@@ -55,6 +61,11 @@ AActor* UObjectPoolSubsystem::Spawn(const FTransform& InTransform)
 void UObjectPoolSubsystem::ReturnPool(AActor* InActor)
 {
 	if (!InActor) return;
+
+	if (InActor->GetClass()->ImplementsInterface(UPoolableInterface::StaticClass()))
+	{
+		IPoolableInterface::Execute_OnReturn(InActor);
+	}
 
 	ActiveActors.Remove(InActor);
 	ReadyActors.Add(InActor);

@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interface/PoolableInterface.h"
 #include "DamagePopupActor.generated.h"
 
 class UWidgetComponent;
 class UDamagePopupWidget;
 
 UCLASS()
-class UNREAL10TH_CPP_API ADamagePopupActor : public AActor
+class UNREAL10TH_CPP_API ADamagePopupActor : public AActor, public IPoolableInterface
 {
 	GENERATED_BODY()
 	
@@ -20,6 +21,13 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void OnPopupStart(float InDamage);
+
+	UFUNCTION(BlueprintCallable)
+	virtual void UseFinish() override;
+
+	virtual void OnSpawn_Implementation() override;
+
+	virtual void OnReturn_Implementation() override;
 
 protected:
 	// Called when the game starts or when spawned

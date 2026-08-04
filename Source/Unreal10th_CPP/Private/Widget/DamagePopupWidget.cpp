@@ -13,3 +13,14 @@ void UDamagePopupWidget::PlayPopupAnimation()
 {
 	PlayAnimation(PopupAnimation);
 }
+
+void UDamagePopupWidget::OnAnimationFinished_Implementation(const UWidgetAnimation* Animation)
+{
+	Super::OnAnimationFinished_Implementation(Animation);
+
+	if (Animation == PopupAnimation)
+	{
+		// 팝업 애니메이션이 종료됨
+		OnPopUpAnimationFinished.ExecuteIfBound();
+	}
+}

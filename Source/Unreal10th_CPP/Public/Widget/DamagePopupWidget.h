@@ -7,6 +7,9 @@
 #include "DamagePopupWidget.generated.h"
 
 class UTextBlock;
+
+DECLARE_DELEGATE(FOnPopUpAnimationFinished);
+
 /**
  * 
  */
@@ -21,6 +24,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void PlayPopupAnimation();
+
+protected:
+	virtual void OnAnimationFinished_Implementation(const UWidgetAnimation* Animation) override;
+
+public:
+	FOnPopUpAnimationFinished OnPopUpAnimationFinished;
 
 protected:
 	UPROPERTY(VisibleDefaultsOnly, meta = (BindWidget))
