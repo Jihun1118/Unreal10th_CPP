@@ -40,9 +40,15 @@ float ADummyEnemyActor::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	if (UGameInstance* GameInstance = GetGameInstance())
 	{
 		UObjectPoolSubsystem* SubSystem = GameInstance->GetSubsystem<UObjectPoolSubsystem>();
-		AActor* SpawnedActor = SubSystem->Spawn(PopupTransform->GetComponentTransform());
-		ADamagePopupActor* DamagePopup = Cast<ADamagePopupActor>(SpawnedActor);
-		DamagePopup->OnPopupStart(Damage);
+		//AActor* Spawned = SubSystem->Spawn(
+		//	DamagePopupClass, PopupTransform->GetComponentTransform());
+		//ADamagePopupActor* DamagePopup = Cast<ADamagePopupActor>(Spawned);
+		ADamagePopupActor* DamagePopup = SubSystem->Spawn(
+			DamagePopupClass, PopupTransform->GetComponentTransform());
+		if (DamagePopup)
+		{
+			DamagePopup->OnPopupStart(Damage);
+		}
 	}
 
 	return Damage;
