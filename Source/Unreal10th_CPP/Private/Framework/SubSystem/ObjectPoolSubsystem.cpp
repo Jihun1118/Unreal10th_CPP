@@ -19,8 +19,8 @@ void UObjectPoolSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		if (!DataAsset.IsNull())
 		{
 			TObjectPtr<UObjectPoolDataAsset> LoadedDataAsset = DataAsset.LoadSynchronous();
-			ObjectPools.FindOrAdd(LoadedDataAsset->ActorClass.LoadSynchronous());
-
+			FObjectPool& Pool = ObjectPools.FindOrAdd(LoadedDataAsset->ActorClass.LoadSynchronous());
+			Pool.InitialSize = DataAsset->InitialSize;
 		}
 	}
 }
@@ -31,12 +31,59 @@ void UObjectPoolSubsystem::Deinitialize()
 	Super::Deinitialize();
 }
 
+bool UObjectPoolSubsystem::RegisterPoolDataAsset(const UObjectPoolDataAsset* InDataAsset, bool bWarmup)
+{
+	if (!InDataAsset || InDataAsset->ActorClass.IsNull()) return false;
+	
+	TSubclassOf<AActor> LoadedActorClass = InDataAsset->ActorClass.LoadSynchronous();
+
+	ClearPool(LoadedActorClass);	// 이미 있으면 정리
+
+	FObjectPool& Pool = ObjectPools.Add(LoadedActorClass);	// 새로 추가
+	Pool.InitialSize = InDataAsset->InitialSize;			// 초기값 세팅
+
+	if (bWarmup)
+	{
+		Warmup(LoadedActorClass);	// 웜업 요청있으면 웜업도 하기
+	}
+
+	return true;
+}
+
+bool UObjectPoolSubsystem::UnregisterPoolDataAsset(const UObjectPoolDataAsset* InDataAsset)
+{
+	if (!InDataAsset || InDataAsset->ActorClass.IsNull()) return false;
+
+	TSubclassOf<AActor> LoadedActorClass = InDataAsset->ActorClass.LoadSynchronous();
+	ClearPool(LoadedActorClass);
+
+	return true;
+}
+
 void UObjectPoolSubsystem::Warmup(TSubclassOf<AActor> InClass)
 {
+	if (FObjectPool* Pool = ObjectPools.Find(InClass))
+	{
+		FTransform Init(FVector::DownVector * 10000.0f);
+		TArray<TWeakObjectPtr<AActor>> SpawnedArray;
+		SpawnedArray.Reserve(Pool->InitialSize);
+		for (int i = 0; i < Pool->InitialSize; i++)
+		{
+			SpawnedArray.Add(Spawn(InClass, Init));			
+		}
+		for (TWeakObjectPtr<AActor> Spawned : SpawnedArray)
+		{
+			ReturnPool(Spawned.Get());
+		}
+	}
 }
 
 void UObjectPoolSubsystem::WarmupAll()
 {
+	for (auto& [Key, _] : ObjectPools)
+	{
+		Warmup(Key);
+	}
 }
 
 void UObjectPoolSubsystem::ClearPool(TSubclassOf<AActor> InClass)
@@ -53,6 +100,7 @@ void UObjectPoolSubsystem::ClearPool(TSubclassOf<AActor> InClass)
 			if (IsValid(Actor)) Actor->Destroy();
 		}
 		Pool->ActiveActors.Empty();
+		ObjectPools.Remove(InClass);
 	}
 }
 

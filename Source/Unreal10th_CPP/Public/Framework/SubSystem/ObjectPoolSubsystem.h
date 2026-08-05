@@ -6,6 +6,8 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "ObjectPoolSubsystem.generated.h"
 
+class UObjectPoolDataAsset;
+
 // 오브젝트 풀 하나를 나타낼 구조체
 USTRUCT()
 struct FObjectPool
@@ -36,6 +38,12 @@ class UNREAL10TH_CPP_API UObjectPoolSubsystem : public UGameInstanceSubsystem
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
+
+	UFUNCTION(BlueprintCallable)
+	bool RegisterPoolDataAsset(const UObjectPoolDataAsset* InDataAsset, bool bWarmup = false);
+
+	UFUNCTION(BlueprintCallable)
+	bool UnregisterPoolDataAsset(const UObjectPoolDataAsset* InDataAsset);
 
 	UFUNCTION(BlueprintCallable)
 	void Warmup(TSubclassOf<AActor> InClass);

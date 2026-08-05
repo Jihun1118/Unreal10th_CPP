@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "CommonHeader/ObjectPoolEnums.h"
 #include "ObjectPoolDataAsset.generated.h"
 
 /**
@@ -22,4 +23,12 @@ public:
 	// 사전 생성해 둘 초기 수량
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0"))
 	int32 InitialSize = 0;
+
+	// 풀에서 최대로 관리 가능한 개수
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0"))
+	int32 MaxSize = 0;
+
+	// 최대치일 때 생성 정책
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	EObjectPoolPolicy MaxPolicy = EObjectPoolPolicy::Grow;
 };
