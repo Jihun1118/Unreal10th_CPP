@@ -20,8 +20,49 @@ void UObjectPoolSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		{
 			TObjectPtr<UObjectPoolDataAsset> LoadedDataAsset = DataAsset.LoadSynchronous();
 			ObjectPools.FindOrAdd(LoadedDataAsset->ActorClass.LoadSynchronous());
+
 		}
 	}
+}
+
+void UObjectPoolSubsystem::Deinitialize()
+{
+	ClearAllPools();
+	Super::Deinitialize();
+}
+
+void UObjectPoolSubsystem::Warmup(TSubclassOf<AActor> InClass)
+{
+}
+
+void UObjectPoolSubsystem::WarmupAll()
+{
+}
+
+void UObjectPoolSubsystem::ClearPool(TSubclassOf<AActor> InClass)
+{
+	if (FObjectPool* Pool = ObjectPools.Find(InClass))
+	{
+		for (AActor* Actor : Pool->ReadyActors)
+		{
+			if (IsValid(Actor)) Actor->Destroy();
+		}
+		Pool->ReadyActors.Empty();
+		for (AActor* Actor : Pool->ActiveActors)
+		{
+			if (IsValid(Actor)) Actor->Destroy();
+		}
+		Pool->ActiveActors.Empty();
+	}
+}
+
+void UObjectPoolSubsystem::ClearAllPools()
+{
+	for (auto& [Key, _] : ObjectPools)
+	{
+		ClearPool(Key);
+	}
+	ObjectPools.Empty();
 }
 
 AActor* UObjectPoolSubsystem::Spawn(TSubclassOf<AActor> InClassType, const FTransform& InTransform)
