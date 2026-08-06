@@ -16,6 +16,20 @@ struct FObjectPool
 {
 	GENERATED_BODY()
 
+	FObjectPool()
+		: ActiveOrderList(MakeShared<TDoubleLinkedList<TObjectPtr<AActor>>>()),
+		ActiveNodeMap(MakeShared<TMap<TObjectPtr<AActor>, FOrderNode*>>())
+	{
+	}
+
+	//// TUniquePtr는 복사 불가이므로 Move만 허용
+	//FObjectPool(FObjectPool&& Other) = default;
+	//FObjectPool& operator=(FObjectPool&& Other) = default;
+
+	//// 복사 금지
+	//FObjectPool(const FObjectPool&) = delete;
+	//FObjectPool& operator=(const FObjectPool&) = delete;
+
 	// 사용 대기 중인 액터들
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<AActor>> ReadyActors;
@@ -25,11 +39,11 @@ struct FObjectPool
 	TSet<TObjectPtr<AActor>> ActiveActors;
 
 	// 사용 순서를 기록할 더블 링크드 리스트(Head가 가장 오래됨, Tail이 가장 새것) (주의:GC가 추적은 못함)
-	TDoubleLinkedList<TObjectPtr<AActor>> ActiveOrderList;
+	TSharedPtr<TDoubleLinkedList<TObjectPtr<AActor>>> ActiveOrderList;
 
 	// 액터 포인터를 키값으로 하고, ActiveOrderList의 노드 주소를 Value로 하는 맵
-	TMap<TObjectPtr<AActor>, FOrderNode*> ActiveNodeMap;
-
+	TSharedPtr<TMap<TObjectPtr<AActor>, FOrderNode*>> ActiveNodeMap;
+		
 	// 초기 생성 개수
 	UPROPERTY(Transient)
 	int32 InitialSize = 0;

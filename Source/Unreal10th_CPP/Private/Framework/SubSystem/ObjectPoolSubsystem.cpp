@@ -173,7 +173,7 @@ AActor* UObjectPoolSubsystem::Spawn(TSubclassOf<AActor> InClassType, const FTran
 				UE_LOG(LogTemp, Log, TEXT("Spawn(New) : %s"), Spawned ? *Spawned->GetName() : TEXT("None"));
 				break;
 			case EObjectPoolPolicy::ReuseOldest:
-				if (FOrderNode* HeadNode = Pool->ActiveOrderList.GetHead())
+				if (FOrderNode* HeadNode = Pool->ActiveOrderList->GetHead())
 				{
 					AActor* OldestActor = HeadNode->GetValue();
 					ReturnPool(OldestActor);		// 편의성 + 리셋을 위해
@@ -203,8 +203,8 @@ AActor* UObjectPoolSubsystem::Spawn(TSubclassOf<AActor> InClassType, const FTran
 
 		Pool->ActiveActors.Add(Spawned);
 		FOrderNode* NewNode = new FOrderNode(Spawned);
-		Pool->ActiveOrderList.AddTail(NewNode);
-		Pool->ActiveNodeMap.Add(Spawned, NewNode);
+		Pool->ActiveOrderList->AddTail(NewNode);
+		Pool->ActiveNodeMap->Add(Spawned, NewNode);
 	}
 
 	return Spawned;
@@ -233,10 +233,10 @@ void UObjectPoolSubsystem::ReturnPool(AActor* InActor)
 	}
 
 	Pool->ActiveActors.Remove(InActor);
-	if (FOrderNode** FoundNode = Pool->ActiveNodeMap.Find(InActor))
+	if (FOrderNode** FoundNode = Pool->ActiveNodeMap->Find(InActor))
 	{
-		Pool->ActiveOrderList.RemoveNode(*FoundNode, true);	// 리스트에서 FoundNode 제거하고, delete까지 처리
-		Pool->ActiveNodeMap.Remove(InActor);
+		Pool->ActiveOrderList->RemoveNode(*FoundNode, true);	// 리스트에서 FoundNode 제거하고, delete까지 처리
+		Pool->ActiveNodeMap->Remove(InActor);
 	}
 	Pool->ReadyActors.Add(InActor);
 }
