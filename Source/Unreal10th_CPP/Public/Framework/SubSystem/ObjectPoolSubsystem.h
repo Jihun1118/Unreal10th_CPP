@@ -22,14 +22,6 @@ struct FObjectPool
 	{
 	}
 
-	//// TUniquePtr는 복사 불가이므로 Move만 허용
-	//FObjectPool(FObjectPool&& Other) = default;
-	//FObjectPool& operator=(FObjectPool&& Other) = default;
-
-	//// 복사 금지
-	//FObjectPool(const FObjectPool&) = delete;
-	//FObjectPool& operator=(const FObjectPool&) = delete;
-
 	// 사용 대기 중인 액터들
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<AActor>> ReadyActors;

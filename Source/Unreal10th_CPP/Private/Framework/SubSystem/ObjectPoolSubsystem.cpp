@@ -178,6 +178,7 @@ AActor* UObjectPoolSubsystem::Spawn(TSubclassOf<AActor> InClassType, const FTran
 					AActor* OldestActor = HeadNode->GetValue();
 					ReturnPool(OldestActor);		// 편의성 + 리셋을 위해
 					Spawned = GetReadyActor(Pool);
+					Spawned->SetActorTransform(InTransform);
 
 					UE_LOG(LogTemp, Log, TEXT("Spawn(Oldest) : %s"), Spawned ? *Spawned->GetName() : TEXT("None"));
 				}
