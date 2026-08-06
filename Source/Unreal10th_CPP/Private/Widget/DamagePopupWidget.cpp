@@ -11,6 +11,7 @@ void UDamagePopupWidget::SetDamage(float InDamage)
 
 void UDamagePopupWidget::PlayPopupAnimation()
 {
+	SetAnimationCurrentTime(PopupAnimation, 0.0f);	// 혹시 몰라 안전용으로
 	PlayAnimation(PopupAnimation);
 }
 
@@ -22,7 +23,7 @@ void UDamagePopupWidget::OnAnimationFinished_Implementation(const UWidgetAnimati
 	if (Animation == PopupAnimation)
 	{
 		//UE_LOG(LogTemp, Log, TEXT("OnAnimationFinished : PopupAnimation"));
-		// 팝업 애니메이션이 종료됨
+		// 팝업 애니메이션이 종료됨		
 		OnPopUpAnimationFinished.ExecuteIfBound();
 	}
 }
