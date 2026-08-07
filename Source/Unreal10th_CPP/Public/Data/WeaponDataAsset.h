@@ -3,8 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/DataAsset.h"
-#include "Engine/StreamableManager.h"
+#include "Data/Item/ItemDataAsset.h"
 #include "NiagaraSystem.h"
 #include "WeaponDataAsset.generated.h"
 
@@ -13,64 +12,67 @@ class USkeletalMesh;
  * 
  */
 UCLASS(BlueprintType)
-class UNREAL10TH_CPP_API UWeaponDataAsset : public UPrimaryDataAsset
+class UNREAL10TH_CPP_API UWeaponDataAsset : public UItemDataAsset
 {
 	GENERATED_BODY()
 
 public:
-	TSharedPtr<FStreamableHandle> RequestDataLoad(FStreamableDelegate InDelegate) const;
-	bool IsLoaded() const;
+	virtual bool IsLoaded() const override;
+
+protected:
+	virtual void OnAsyncRequest(TArray<FSoftObjectPath>& InOutArray) const override;
 
 public:
 	// 무기의 메시
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Appearance")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Appearance")
 	TSoftObjectPtr<USkeletalMesh> Mesh;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Appearance")
+	// 트레일 이팩트
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Appearance")
 	TSoftObjectPtr<UNiagaraSystem> TrailVFX;
 
 	// 무기가 Attach될 소캣
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Appearance")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Appearance")
 	FName AttachSocketName = TEXT("hand_rSocket");
 
 	// 무기 Attach할 위치의 Offset
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Appearance")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Appearance")
 	FVector LocationOffset = FVector::ZeroVector;
 
 	// HitArea캡슐의 높이 절반
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HitArea")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|HitArea")
 	float HitAreaHalfHeight = 60.0f;
 
 	// HitArea캡슐의 반지름
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HitArea")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|HitArea")
 	float HitAreaRadius = 30.0f;
 
 	// 무기 사용 회수
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponData")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Data")
 	int32 UseCount = 10;
 
 	// 무한 사용 가능 여부
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponData")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Data")
 	bool bInfinityUse = false;
 
 	// 무기의 공격력
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponData")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Data")
 	float AttackPower = 10.0f;
 
 	// 무기의 범위공격력
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponData")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Data")
 	float AreaAttackPower = 10.0f;
 
 	// 무기의 범위 공격의 반지름(안쪽, 이 안쪽은 100% 데미지)
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponData")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Data")
 	float AreaAttackInnerRadius = 100.0f;
 
 	// 무기의 범위 공격의 반지름(바깥, Inner ~ Outter범위는 거리에 따라 감소)
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponData")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Data")
 	float AreaAttackOutterRadius = 300.0f;
 
 	// 무기의 공격 애니메이션 몽타주
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WeaponData")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon|Data")
 	TObjectPtr<UAnimMontage> AttackMontage;
 
 };
