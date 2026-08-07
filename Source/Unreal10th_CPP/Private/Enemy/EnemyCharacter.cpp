@@ -56,6 +56,7 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
 
 void AEnemyCharacter::OnItemDrop()
 {
+	UE_LOG(LogTemp, Log, TEXT("OnItemDrop 1"));
 	if (!GetWorld()) return;
 	if (ItemDropTable)
 	{
@@ -75,13 +76,11 @@ void AEnemyCharacter::OnItemDrop()
 			// 드랍 확률 체크
 			if (FMath::FRand() > Row->DropRate) continue;
 
-			//GetWorld()->SpawnActor<APickupBase>(Row->DropItemClass, GetActorTransform());
-			GetWorld()->SpawnActor<AActor>(PickupClass, GetActorTransform());
+			//GetWorld()->SpawnActor<AActor>(PickupClass, GetActorTransform());
+			APickupBase* PickupActor = GetWorld()->SpawnActor<APickupBase>(PickupClass, GetActorTransform());
+			PickupActor->InitializePickup(Row->PickupData);
 		}
-
 	}
-	//ItemDropTable->GetRowMap;
-	//ItemDropTable->GetAllRows;
 }
 
 void AEnemyCharacter::OnDie()

@@ -90,9 +90,9 @@ void APickupWeapon::OnUpdatePickupEffect()
 void APickupWeapon::OnFinishPickupEffect()
 {
 	GetWorldTimerManager().ClearTimer(PickupEffectTimerHandle);
-	if (TargetActor.IsValid())
+	if (TargetActor.IsValid() && WeaponData.IsValid())
 	{
-		IWeaponUserInterface::Execute_EquipWeapon(TargetActor.Get(), DataAsset);
+		IWeaponUserInterface::Execute_EquipWeapon(TargetActor.Get(), WeaponData.Get());
 	}
 	Destroy();
 }
