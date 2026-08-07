@@ -17,7 +17,7 @@ class UNREAL10TH_CPP_API APickupWeapon : public APickupBase
 	GENERATED_BODY()
 	
 public:
-	virtual void InitializePickup(UWeaponDataAsset* InData) override;
+	virtual void InitializePickup(UItemDataAsset* InData) override;
 
 protected:
 	virtual void OnConstruction(const FTransform& Transform) override;

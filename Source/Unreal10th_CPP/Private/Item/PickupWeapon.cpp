@@ -7,7 +7,7 @@
 
 #include "Components/SphereComponent.h"
 
-void APickupWeapon::InitializePickup(UWeaponDataAsset* InData)
+void APickupWeapon::InitializePickup(UItemDataAsset* InData)
 {
 	Super::InitializePickup(InData);
 

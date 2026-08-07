@@ -30,7 +30,7 @@ APickupBase::APickupBase()
 
 }
 
-void APickupBase::InitializePickup(UWeaponDataAsset* InData)
+void APickupBase::InitializePickup(UItemDataAsset* InData)
 {
 	DataAsset = InData;
 }

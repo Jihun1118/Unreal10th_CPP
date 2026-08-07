@@ -108,7 +108,11 @@ void UStatComponent::DamageHealth_Implementation(float InAmount)
 	{
 		CurrentHealth = 0;
 		OnHealthChange.Broadcast(CurrentHealth, MaxHealth);
-		OnDie.Broadcast();
+		if (bAlive)
+		{
+			OnDie.Broadcast();
+		}
+		bAlive = false;
 	}
 	else
 	{
@@ -124,6 +128,11 @@ void UStatComponent::HealHealth_Implementation(float InAmount)
 	CurrentHealth = FMath::Min(CurrentHealth + InAmount, MaxHealth);
 	OnHealthChange.Broadcast(CurrentHealth, MaxHealth);
 	//UE_LOG(LogTemp, Log, TEXT("Health : %.1f / %.1f"), CurrentHealth, MaxHealth);
+}
+
+bool UStatComponent::IsAlive() const
+{
+	return bAlive;
 }
 
 // Called when the game starts

@@ -56,7 +56,7 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
 
 void AEnemyCharacter::OnItemDrop()
 {
-	UE_LOG(LogTemp, Log, TEXT("OnItemDrop 1"));
+	//UE_LOG(LogTemp, Log, TEXT("OnItemDrop 1"));
 	if (!GetWorld()) return;
 	if (ItemDropTable)
 	{
@@ -77,8 +77,11 @@ void AEnemyCharacter::OnItemDrop()
 			if (FMath::FRand() > Row->DropRate) continue;
 
 			//GetWorld()->SpawnActor<AActor>(PickupClass, GetActorTransform());
-			APickupBase* PickupActor = GetWorld()->SpawnActor<APickupBase>(PickupClass, GetActorTransform());
-			PickupActor->InitializePickup(Row->PickupData);
+			if (APickupBase* PickupActor = GetWorld()->SpawnActor<APickupBase>(PickupClass, GetActorTransform()))
+			{
+				PickupActor->InitializePickup(Row->PickupData);
+				UE_LOG(LogTemp, Log, TEXT("%s가 드랍되었습니다."), *(Row->PickupData->DisplayName).ToString());
+			}
 		}
 	}
 }

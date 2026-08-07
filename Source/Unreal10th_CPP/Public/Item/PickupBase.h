@@ -8,7 +8,7 @@
 
 class USphereComponent;
 class UNiagaraComponent;
-class UWeaponDataAsset;
+class UItemDataAsset;
 
 UCLASS()
 class UNREAL10TH_CPP_API APickupBase : public AActor
@@ -18,7 +18,7 @@ class UNREAL10TH_CPP_API APickupBase : public AActor
 public:	
 	// Sets default values for this actor's properties
 	APickupBase();
-	virtual void InitializePickup(UWeaponDataAsset* InData);
+	virtual void InitializePickup(UItemDataAsset* InData);
 
 protected:
 	// Called when the game starts or when spawned
@@ -45,7 +45,7 @@ protected:
 
 	// 픽업시 획득할 데이터 에셋
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Base Data")
-	TObjectPtr<UWeaponDataAsset> DataAsset;
+	TObjectPtr<UItemDataAsset> DataAsset;
 
 	// 맵에 있을 때 위아래로 왕복하는 모습용 커브
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effect|Default")
