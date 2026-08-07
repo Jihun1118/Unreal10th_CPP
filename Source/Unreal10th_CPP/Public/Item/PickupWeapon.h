@@ -22,10 +22,12 @@ public:
 
 protected:
 	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual UMeshComponent* GetMesh() const override { return Mesh; };
 	virtual void OnPickup(AActor* InTarget) override;
 
 	virtual void OnUpdatePickupEffect();
 	virtual void OnFinishPickupEffect();
+
 
 private:
 	bool IsPickupEffectAssetReady() const;

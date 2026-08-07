@@ -21,6 +21,7 @@ public:
 	
 protected:
 	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual UMeshComponent* GetMesh() const override { return Mesh; };
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
