@@ -13,6 +13,12 @@ UCLASS()
 class UNREAL10TH_CPP_API UMiscItemDataAsset : public UItemDataAsset
 {
 	GENERATED_BODY()
+
+public:
+	virtual bool IsLoaded() const override;
+
+protected:
+	virtual void OnAsyncRequest(TArray<FSoftObjectPath>& InOutArray) const override;
 	
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Misc|Appearance")

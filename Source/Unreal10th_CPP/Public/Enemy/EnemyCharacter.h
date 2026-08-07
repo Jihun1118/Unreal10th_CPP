@@ -9,6 +9,8 @@
 
 class UStatComponent;
 class APickupWeapon;
+class APickupMisc;
+class UItemDataAsset;
 
 UCLASS()
 class UNREAL10TH_CPP_API AEnemyCharacter : public ACharacter, public IStatInterface
@@ -36,13 +38,13 @@ protected:
 	UFUNCTION()
 	virtual void OnDie();
 
+private:
+	void SpawnPickup(UItemDataAsset* ItemDataAsset);
+
 protected:
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly)
 	TObjectPtr<UStatComponent> StatComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TObjectPtr<UDataTable> ItemDropTable;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<APickupWeapon> PickupClass;
+	TObjectPtr<UDataTable> ItemDropTable;	
 };

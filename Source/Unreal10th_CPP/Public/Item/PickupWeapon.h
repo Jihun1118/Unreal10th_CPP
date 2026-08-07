@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Item/PickupBase.h"
-#include "Data/WeaponDataAsset.h"
+#include "Data/Item/WeaponDataAsset.h"
 #include "PickupWeapon.generated.h"
 
 

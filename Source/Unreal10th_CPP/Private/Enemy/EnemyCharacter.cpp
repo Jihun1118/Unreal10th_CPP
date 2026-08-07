@@ -71,17 +71,27 @@ void AEnemyCharacter::OnItemDrop()
 		for (FItemDropTableRow* Row : AllRows)
 		{
 			// 필수 데이터 확인
-			if (!Row || !Row->PickupData || !PickupClass) continue;
+			if (!Row || !Row->PickupData) continue;
 			
 			// 드랍 확률 체크
 			if (FMath::FRand() > Row->DropRate) continue;
 
-			//GetWorld()->SpawnActor<AActor>(PickupClass, GetActorTransform());
-			if (APickupBase* PickupActor = GetWorld()->SpawnActor<APickupBase>(PickupClass, GetActorTransform()))
+			UItemDataAsset* PickupData = Row->PickupData;
+			if (!PickupData->IsLoaded())
 			{
-				PickupActor->InitializePickup(Row->PickupData);
-				UE_LOG(LogTemp, Log, TEXT("%s가 드랍되었습니다."), *(Row->PickupData->DisplayName).ToString());
+				PickupData->RequestDataLoad(
+					FStreamableDelegate::CreateWeakLambda(
+						this,
+						[this, PickupData]()
+						{							
+							SpawnPickup(PickupData);
+						}));
 			}
+			else
+			{
+				SpawnPickup(PickupData);
+			}
+			
 		}
 	}
 }
@@ -93,4 +103,15 @@ void AEnemyCharacter::OnDie()
 	// 아이템 드랍 처리
 	OnItemDrop();
 	
+}
+
+void AEnemyCharacter::SpawnPickup(UItemDataAsset* ItemDataAsset)
+{
+	if (APickupBase* PickupActor = GetWorld()->SpawnActor<APickupBase>(
+		ItemDataAsset->PickupClass.Get(), GetActorTransform()))
+	{
+		PickupActor->InitializePickup(ItemDataAsset);
+		UE_LOG(LogTemp, Log, TEXT("%s가 드랍되었습니다."),
+			*(ItemDataAsset->DisplayName).ToString());
+	}
 }

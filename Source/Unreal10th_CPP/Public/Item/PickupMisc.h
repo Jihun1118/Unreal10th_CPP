@@ -20,6 +20,9 @@ public:
 	virtual void InitializePickup(UItemDataAsset* InData) override;
 	
 protected:
+	virtual void OnConstruction(const FTransform& Transform) override;
+
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UStaticMeshComponent> Mesh = nullptr;
 

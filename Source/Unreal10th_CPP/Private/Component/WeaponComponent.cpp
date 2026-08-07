@@ -5,7 +5,7 @@
 #include "Unreal10th_CPP/Unreal10th_CPP.h"
 #include "Interface/WeaponUserInterface.h"
 #include "Weapon/WeaponActor.h"
-#include "Data/WeaponDataAsset.h"
+#include "Data/Item/WeaponDataAsset.h"
 #include "AnimNotify/AnimNotifyState_SectionJump.h"
 
 #include "Kismet/GameplayStatics.h"

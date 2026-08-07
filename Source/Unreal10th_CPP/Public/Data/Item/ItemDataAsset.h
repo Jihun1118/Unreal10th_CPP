@@ -7,6 +7,7 @@
 #include "Engine/StreamableManager.h"
 #include "ItemDataAsset.generated.h"
 
+class APickupBase;
 /**
  * 
  */
@@ -22,7 +23,8 @@ public:
 protected:
 	virtual void OnAsyncRequest(TArray<FSoftObjectPath>& InOutArray) const;
 
-public:
+public:	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Base|Data")
 	FText DisplayName;
 
@@ -31,6 +33,10 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Base|Data")
 	int32 Price = 1;
+
+	// 스폰할 클래스
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Base|Spawn")
+	TSoftClassPtr<APickupBase> PickupClass;
 
 	// 스폰할 위치의 Offset
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Base|Spawn")
