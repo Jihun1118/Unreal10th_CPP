@@ -16,6 +16,9 @@ class UNREAL10TH_CPP_API APickupWeapon : public APickupBase
 {
 	GENERATED_BODY()
 	
+public:
+	virtual void InitializePickup(UWeaponDataAsset* InData) override;
+
 protected:
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void OnPickup(AActor* InTarget) override;
@@ -28,10 +31,6 @@ private:
 
 
 protected:
-	// 이 픽업을 먹었을 때 획득하는 무기 데이터
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Base Data")
-	TObjectPtr<UWeaponDataAsset> WeaponData = nullptr;
-
 	// 아이템을 줍는 연출의 진행 상황용 커브
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effect|Pickup")
 	TObjectPtr<UCurveFloat> PickupAlpha;
@@ -67,4 +66,7 @@ private:
 
 	// 아이템을 줍는 연출용 시작 위치
 	FVector PickupStartLocation;
+
+	// 이 픽업을 먹었을 때 획득하는 무기 데이터
+	TWeakObjectPtr<UWeaponDataAsset> WeaponData = nullptr;
 };

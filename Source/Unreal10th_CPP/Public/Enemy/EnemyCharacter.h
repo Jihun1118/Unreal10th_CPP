@@ -8,6 +8,7 @@
 #include "EnemyCharacter.generated.h"
 
 class UStatComponent;
+class APickupWeapon;
 
 UCLASS()
 class UNREAL10TH_CPP_API AEnemyCharacter : public ACharacter, public IStatInterface
@@ -30,6 +31,8 @@ protected:
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
+	virtual void OnItemDrop();
+
 	UFUNCTION()
 	virtual void OnDie();
 
@@ -39,4 +42,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UDataTable> ItemDropTable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<APickupWeapon> PickupClass;
 };

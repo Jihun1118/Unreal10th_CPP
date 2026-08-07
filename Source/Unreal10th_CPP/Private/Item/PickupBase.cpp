@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "NiagaraComponent.h"
+#include "Unreal10th_CPP/Unreal10th_CPP.h"
 
 // Sets default values
 APickupBase::APickupBase()
@@ -14,6 +15,8 @@ APickupBase::APickupBase()
 
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("RootCollision"));
 	SphereCollision->InitSphereRadius(100.0f);
+	SphereCollision->SetCollisionResponseToAllChannels(ECR_Ignore);
+	SphereCollision->SetCollisionResponseToChannel(ECC_Player, ECR_Overlap);
 	SetRootComponent(SphereCollision);
 
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
@@ -25,6 +28,11 @@ APickupBase::APickupBase()
 	//NiagaraComponent->Activate();	// 이 나이아가라 컴포넌트가 가지고 있는 나이아가라 에셋을 재생
 	//NiagaraComponent->Deactivate();	// 이 나이아가라 컴포넌트가 가지고 있는 나이아가라 에셋을 재생 중지
 
+}
+
+void APickupBase::InitializePickup(UWeaponDataAsset* InData)
+{
+	DataAsset = InData;
 }
 
 // Called when the game starts or when spawned

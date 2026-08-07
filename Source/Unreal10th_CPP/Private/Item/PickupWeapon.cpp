@@ -7,17 +7,25 @@
 
 #include "Components/SphereComponent.h"
 
-void APickupWeapon::OnConstruction(const FTransform& Transform)
+void APickupWeapon::InitializePickup(UWeaponDataAsset* InData)
 {
-	Super::OnConstruction(Transform);
-	if (WeaponData)
+	Super::InitializePickup(InData);
+
+	if (DataAsset)
 	{
+		WeaponData = Cast<UWeaponDataAsset>(DataAsset);
 		if (USkeletalMesh* MeshData = WeaponData->Mesh.LoadSynchronous())
 		{
 			Mesh->SetSkeletalMesh(MeshData);
 			Mesh->SetRelativeLocation(MeshBaseLocation + WeaponData->LocationOffset);
 		}
 	}
+}
+
+void APickupWeapon::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	InitializePickup(DataAsset);
 }
 
 void APickupWeapon::OnPickup(AActor* InTarget)
@@ -84,7 +92,7 @@ void APickupWeapon::OnFinishPickupEffect()
 	GetWorldTimerManager().ClearTimer(PickupEffectTimerHandle);
 	if (TargetActor.IsValid())
 	{
-		IWeaponUserInterface::Execute_EquipWeapon(TargetActor.Get(), WeaponData);
+		IWeaponUserInterface::Execute_EquipWeapon(TargetActor.Get(), DataAsset);
 	}
 	Destroy();
 }
