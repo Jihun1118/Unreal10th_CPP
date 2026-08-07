@@ -34,6 +34,7 @@ protected:
 
 	virtual void OnUpdateUpdownSpin(float InDeltaTime);
 
+	virtual UMeshComponent* GetMesh() const;
 
 private:
 	bool IsCurveAssetReady() const;
@@ -65,10 +66,7 @@ protected:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TObjectPtr<USphereComponent> SphereCollision = nullptr;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TObjectPtr<USkeletalMeshComponent> Mesh = nullptr;
+	TObjectPtr<USphereComponent> SphereCollision = nullptr;	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UNiagaraComponent> NiagaraComponent;

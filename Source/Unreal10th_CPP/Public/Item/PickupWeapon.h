@@ -17,6 +17,7 @@ class UNREAL10TH_CPP_API APickupWeapon : public APickupBase
 	GENERATED_BODY()
 	
 public:
+	APickupWeapon();
 	virtual void InitializePickup(UItemDataAsset* InData) override;
 
 protected:
@@ -28,7 +29,6 @@ protected:
 
 private:
 	bool IsPickupEffectAssetReady() const;
-
 
 protected:
 	// 아이템을 줍는 연출의 진행 상황용 커브
@@ -50,6 +50,10 @@ protected:
 	// PickupHeight로 인해 올라가는 높이
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effect|Pickup")
 	float PickupEffecHeight = 50.0f;
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<USkeletalMeshComponent> Mesh = nullptr;
 
 private:
 	// 아이템을 줍는 연출용 타이머 핸들

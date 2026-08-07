@@ -23,10 +23,16 @@ protected:
 	virtual void OnAsyncRequest(TArray<FSoftObjectPath>& InOutArray) const;
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Base")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Base|Data")
 	FText DisplayName;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Base")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Base|Data")
 	FText Description;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Base|Data")
+	int32 Price = 1;
+
+	// 스폰할 위치의 Offset
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Base|Spawn")
+	FVector SpawnLocationOffset = FVector::ZeroVector;
 };
