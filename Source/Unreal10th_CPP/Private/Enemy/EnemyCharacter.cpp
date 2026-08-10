@@ -7,6 +7,8 @@
 #include "Unreal10th_CPP/Unreal10th_CPP.h"
 #include "Interface/HealthInterface.h"
 #include "CommonHeader/ItemDropTable.h"
+#include "Item/PickupBase.h"
+#include "Item/PickupWeapon.h"
 
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
@@ -52,8 +54,64 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
 	return Damage;
 }
 
+void AEnemyCharacter::OnItemDrop()
+{
+	//UE_LOG(LogTemp, Log, TEXT("OnItemDrop 1"));
+	if (!GetWorld()) return;
+	if (ItemDropTable)
+	{
+		//TMap<FName, uint8*> Map = ItemDropTable->GetRowMap();
+		//for (auto& pair : Map)
+		//{
+		//	FItemDropTableRow* Row = reinterpret_cast<FItemDropTableRow*>(pair.Value);
+		//	//(FItemDropTableRow*)(pair.Value);
+		//};
+		TArray<FItemDropTableRow*> AllRows;
+		ItemDropTable->GetAllRows(TEXT("AEnemyCharacter::OnItemDrop"), AllRows);
+		for (FItemDropTableRow* Row : AllRows)
+		{
+			// 필수 데이터 확인
+			if (!Row || !Row->PickupData) continue;
+			
+			// 드랍 확률 체크
+			if (FMath::FRand() > Row->DropRate) continue;
+
+			UItemDataAsset* PickupData = Row->PickupData;
+			if (!PickupData->IsLoaded())
+			{
+				PickupData->RequestDataLoad(
+					FStreamableDelegate::CreateWeakLambda(
+						this,
+						[this, PickupData]()
+						{							
+							SpawnPickup(PickupData);
+						}));
+			}
+			else
+			{
+				SpawnPickup(PickupData);
+			}
+			
+		}
+	}
+}
+
 void AEnemyCharacter::OnDie()
 {
 	UE_LOG(LogTemp, Log, TEXT("%s가 죽었습니다."), *this->GetName());
-	//ItemDropTable->GetRowMap;
+
+	// 아이템 드랍 처리
+	OnItemDrop();
+	
+}
+
+void AEnemyCharacter::SpawnPickup(UItemDataAsset* ItemDataAsset)
+{
+	if (APickupBase* PickupActor = GetWorld()->SpawnActor<APickupBase>(
+		ItemDataAsset->PickupClass.Get(), GetActorTransform()))
+	{
+		PickupActor->InitializePickup(ItemDataAsset);
+		UE_LOG(LogTemp, Log, TEXT("%s가 드랍되었습니다."),
+			*(ItemDataAsset->DisplayName).ToString());
+	}
 }

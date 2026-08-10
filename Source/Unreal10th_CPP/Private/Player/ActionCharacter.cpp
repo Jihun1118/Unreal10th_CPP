@@ -4,7 +4,7 @@
 #include "Player/ActionCharacter.h"
 #include "Component/StatComponent.h"
 #include "Component/WeaponComponent.h"
-#include "Data/WeaponDataAsset.h"
+#include "Data/Item/WeaponDataAsset.h"
 
 #include "EnhancedInputComponent.h"
 #include "GameFramework/SpringArmComponent.h"

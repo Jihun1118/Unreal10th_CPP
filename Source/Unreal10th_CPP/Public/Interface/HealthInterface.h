@@ -33,4 +33,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Health")
 	void HealHealth(float InAmount);
+		
+	virtual bool IsAlive() const = 0;
+
 };

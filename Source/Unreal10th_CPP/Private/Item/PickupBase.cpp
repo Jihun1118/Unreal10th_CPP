@@ -3,8 +3,9 @@
 
 #include "Item/PickupBase.h"
 #include "Components/SphereComponent.h"
-#include "Components/StaticMeshComponent.h"
+#include "Components/MeshComponent.h"
 #include "NiagaraComponent.h"
+#include "Unreal10th_CPP/Unreal10th_CPP.h"
 
 // Sets default values
 APickupBase::APickupBase()
@@ -14,17 +15,20 @@ APickupBase::APickupBase()
 
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("RootCollision"));
 	SphereCollision->InitSphereRadius(100.0f);
+	SphereCollision->SetCollisionResponseToAllChannels(ECR_Ignore);
+	SphereCollision->SetCollisionResponseToChannel(ECC_Player, ECR_Overlap);
 	SetRootComponent(SphereCollision);
-
-	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
-	Mesh->SetupAttachment(SphereCollision);
-	Mesh->SetCollisionProfileName("NoCollision");
 
 	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("VFX"));
 	NiagaraComponent->SetupAttachment(SphereCollision);
 	//NiagaraComponent->Activate();	// 이 나이아가라 컴포넌트가 가지고 있는 나이아가라 에셋을 재생
 	//NiagaraComponent->Deactivate();	// 이 나이아가라 컴포넌트가 가지고 있는 나이아가라 에셋을 재생 중지
 
+}
+
+void APickupBase::InitializePickup(UItemDataAsset* InData)
+{
+	DataAsset = InData;
 }
 
 // Called when the game starts or when spawned
@@ -64,15 +68,23 @@ void APickupBase::OnUpdateUpdownSpin(float InDeltaTime)
 
 	ElapsedTime += InDeltaTime;
 
-	float Div = FMath::Max(UpDownDuration, 0.001f);
-	float Progress = FMath::Fmod(ElapsedTime / Div, 1.0f);
-	FVector NewMeshLocation = MeshBaseLocation;
-	NewMeshLocation.Z += UpDownCurve->GetFloatValue(Progress) * UpDownHeight;
+	if (UMeshComponent* PickupMesh = GetMesh())
+	{
+		float Div = FMath::Max(UpDownDuration, 0.001f);
+		float Progress = FMath::Fmod(ElapsedTime / Div, 1.0f);
+		FVector NewMeshLocation = MeshBaseLocation;
+		NewMeshLocation.Z += UpDownCurve->GetFloatValue(Progress) * UpDownHeight;
 
-	Mesh->SetRelativeLocation(NewMeshLocation);
+		PickupMesh->SetRelativeLocation(NewMeshLocation);
 
-	float NewAngle = SpinCurve->GetFloatValue(Progress) * 360.0f;
-	Mesh->SetRelativeRotation(FRotator(0.0f, NewAngle, 0.0f));
+		float NewAngle = SpinCurve->GetFloatValue(Progress) * 360.0f;
+		PickupMesh->SetRelativeRotation(FRotator(0.0f, NewAngle, 0.0f));
+	}
+}
+
+UMeshComponent* APickupBase::GetMesh() const
+{
+	return nullptr;
 }
 
 bool APickupBase::IsCurveAssetReady() const

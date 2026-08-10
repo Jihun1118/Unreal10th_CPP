@@ -8,6 +8,7 @@
 
 class USphereComponent;
 class UNiagaraComponent;
+class UItemDataAsset;
 
 UCLASS()
 class UNREAL10TH_CPP_API APickupBase : public AActor
@@ -17,6 +18,7 @@ class UNREAL10TH_CPP_API APickupBase : public AActor
 public:	
 	// Sets default values for this actor's properties
 	APickupBase();
+	virtual void InitializePickup(UItemDataAsset* InData);
 
 protected:
 	// Called when the game starts or when spawned
@@ -32,6 +34,7 @@ protected:
 
 	virtual void OnUpdateUpdownSpin(float InDeltaTime);
 
+	virtual UMeshComponent* GetMesh() const;
 
 private:
 	bool IsCurveAssetReady() const;
@@ -40,6 +43,10 @@ protected:
 	// 메시의 기본 위치
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Base Data")
 	FVector MeshBaseLocation = FVector(0, 0, 50.0f);
+
+	// 픽업시 획득할 데이터 에셋
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Base Data")
+	TObjectPtr<UItemDataAsset> DataAsset;
 
 	// 맵에 있을 때 위아래로 왕복하는 모습용 커브
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effect|Default")
@@ -55,20 +62,17 @@ protected:
 
 	// 위아래로 움직이는 거리
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effect|Default")
-	float UpDownHeight = 100.0f;
+	float UpDownHeight = 100.0f;	
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TObjectPtr<USphereComponent> SphereCollision = nullptr;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TObjectPtr<USkeletalMeshComponent> Mesh = nullptr;
+	TObjectPtr<USphereComponent> SphereCollision = nullptr;	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UNiagaraComponent> NiagaraComponent;
 
 private:
 	float ElapsedTime = 0.0f;
-	bool bIdle = true;
+	bool bIdle = true;	
 
 };

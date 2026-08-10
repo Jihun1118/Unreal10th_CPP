@@ -3,7 +3,7 @@
 
 #include "Weapon/WeaponActor.h"
 #include "Interface/WeaponUserInterface.h"
-#include "Data/WeaponDataAsset.h"
+#include "Data/Item/WeaponDataAsset.h"
 
 #include "Unreal10th_CPP/Unreal10th_CPP.h"
 #include "GameFramework/Character.h"
