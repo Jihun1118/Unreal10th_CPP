@@ -90,7 +90,7 @@ void ACellActor::InitializeCell(FCellData* InCellData)
 {
 	if (!InCellData) return;
 
-	Path = InCellData->Path;
+	Path = static_cast<int32>(InCellData->Path);
 	OpenGate();
 }
 
@@ -135,6 +135,6 @@ void ACellActor::OpenGate()
 
 bool ACellActor::IsPath(EDirectionType InDirection)
 {
-	return (Path & InDirection) != EDirectionType::None;
+	return (static_cast<EDirectionType>(Path) & InDirection) != EDirectionType::None;
 }
 
