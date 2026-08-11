@@ -110,7 +110,13 @@ void ACellActor::Tick(float DeltaTime)
 
 void ACellActor::TestPath()
 {
-	UE_LOG(LogTemp, Log, TEXT("TestPath"));
+	TArray<FString> OpenDirections;
+	if (IsPath(EDirectionType::North)) { OpenDirections.Add(TEXT("North")); }
+	if (IsPath(EDirectionType::East)) { OpenDirections.Add(TEXT("East")); }
+	if (IsPath(EDirectionType::South)) { OpenDirections.Add(TEXT("South")); }
+	if (IsPath(EDirectionType::West)) { OpenDirections.Add(TEXT("West")); }
+	FString PathNames = OpenDirections.Num() > 0 ? FString::Join(OpenDirections, TEXT(" | ")) : TEXT("None");
+	UE_LOG(LogTemp, Log, TEXT("[TestPath] Open : %s (Raw: %d)"), *PathNames, Path);
 	OpenGate();
 }
 
