@@ -144,7 +144,7 @@ FCellData* FMazeData::GetRandomNeighborCell(const FCellData& InCell)
 	return GetCell(static_cast<uint8>(NeighborLoc.X), static_cast<uint8>(NeighborLoc.Y));
 }
 
-void FMazeData::ShuffleArray(TArray<FCellData*> InOutArray)
+void FMazeData::ShuffleArray(TArray<FCellData*>& InOutArray)
 {
 	for (int i = InOutArray.Num() - 1; i > 0; i--)
 	{
