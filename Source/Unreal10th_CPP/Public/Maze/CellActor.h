@@ -43,10 +43,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Cell")
 	float WallHalfThickness = 50.0f;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cell", meta = (Bitmask, BitmaskEnum = "EDirectionType"))
-	//int32 Path = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cell")
-	EDirectionType Path = EDirectionType::None;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cell", meta = (Bitmask, BitmaskEnum = "/Script/Unreal10th_CPP.EDirectionType"))
+	int32 Path = 0;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

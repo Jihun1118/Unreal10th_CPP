@@ -16,6 +16,8 @@ FMazeData::~FMazeData()
 
 void FMazeData::MakeMaze(uint8 InWidth, uint8 InHeight, int32 InSeed)
 {
+	ClearMaze();					// 이전에 만들어진 데이터 삭제하기
+
 	Width = InWidth;
 	Height = InHeight;
 
@@ -30,7 +32,6 @@ void FMazeData::MakeMaze(uint8 InWidth, uint8 InHeight, int32 InSeed)
 		RandomStream.Initialize(InSeed);
 	}
 
-	ClearMaze();					// 이전에 만들어진 데이터 삭제하기
 	Cells.SetNum(Width * Height);	// 배열 초기화(SetNum으로 실제 배열 요소도 생성)
 
 	WillsonAlgorithmExecute();
