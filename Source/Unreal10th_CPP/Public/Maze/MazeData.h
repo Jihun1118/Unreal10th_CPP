@@ -2,9 +2,8 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "Maze/CellData.h"
 
-struct FCellData;
 /**
  * 
  */
@@ -14,7 +13,7 @@ public:
 	~FMazeData();	// FMazeData가 상속이 된다면 반드시 가상 소멸자를 사용해야 한다.
 
 	// 미로를 생성하는 함수
-	void MakeMaze(uint8 InWidth, uint8 InHeight, int32 InSeed = RandomSeed);
+	void MakeMaze(uint8 InWidth, uint8 InHeight, EMazeAlgorithm InAlgorithm = EMazeAlgorithm::Wilson, int32 InSeed = RandomSeed);
 
 	// 생성된 미로를 제거하는 함수
 	void ClearMaze();
@@ -25,6 +24,12 @@ public:
 private:
 	// 윌슨 알고리즘을 실행하는 함수
 	void WillsonAlgorithmExecute();
+
+	// 리커시브 백트래킹 알고리즘을 실행하는 함수
+	void RecursiveBacktrackingAlgorithmExecute();
+
+	// 엘러 알고리즘을 실행하는 함수
+	void EllerAlgorithmExecute();
 	
 	// From셀과 To셀 사이의 문을 제거하는 함수
 	void ConnectCells(FCellData* InFrom, FCellData* InTo);
@@ -33,7 +38,28 @@ private:
 	FCellData* GetRandomNeighborCell(const FCellData& InCell);
 
 	// 배열의 순서를 섞는 함수
-	void ShuffleArray(TArray<FCellData*>& InOutArray);
+	template<typename T>
+	void ShuffleArray(TArray<T*>& InOutArray)
+	{
+		for (int i = InOutArray.Num() - 1; i > 0; i--)
+		{
+			int32 Index = RandomStream.RandRange(0, i);
+			InOutArray.Swap(i, Index);
+		}
+	}
+
+	// 작업용 셀 배열의 생성 결과를 FMazeData의 연속 메모리 Cells 배열로 복사하는 헬퍼 함수
+	template<typename TCellType>
+	void CopyToCells(const TArray<TCellType>& InSrcCells)
+	{
+		int32 Count = FMath::Min(Cells.Num(), InSrcCells.Num());
+		for (int32 i = 0; i < Count; i++)
+		{
+			Cells[i].X = InSrcCells[i].X;
+			Cells[i].Y = InSrcCells[i].Y;
+			Cells[i].Path = InSrcCells[i].Path;
+		}
+	}
 
 	// 위치를 인덱스로 변경하는 함수
 	inline uint16 LocationToIndex(uint8 InX, uint8 InY) const { return InX + InY * Width; }

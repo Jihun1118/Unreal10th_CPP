@@ -58,6 +58,9 @@ protected:
 	int32 Height = 3;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maze")
+	EMazeAlgorithm Algorithm = EMazeAlgorithm::Wilson;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maze")
 	int32 RandomSeed = FMazeData::RandomSeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maze|Performance")
