@@ -29,8 +29,6 @@ enum class EMazeAlgorithm : uint8
 struct UNREAL10TH_CPP_API FCellData
 {
 public:
-	virtual ~FCellData() = default;
-
 	// 셀의 X좌표
 	uint8 X = 0;
 	// 셀의 Y좌표
