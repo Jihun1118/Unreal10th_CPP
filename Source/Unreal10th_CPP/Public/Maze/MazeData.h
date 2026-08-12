@@ -19,13 +19,13 @@ public:
 	// 생성된 미로를 제거하는 함수
 	void ClearMaze();
 
-private:
-	// 윌슨 알고리즘을 실행하는 함수
-	void WillsonAlgorithmExecute();
-
 	// 특정 위치의 셀을 리턴하는 함수
 	FCellData* GetCell(uint8 InX, uint8 InY);
 
+private:
+	// 윌슨 알고리즘을 실행하는 함수
+	void WillsonAlgorithmExecute();
+	
 	// From셀과 To셀 사이의 문을 제거하는 함수
 	void ConnectCells(FCellData* InFrom, FCellData* InTo);
 
@@ -41,10 +41,11 @@ private:
 	// 위치가 미로 범위 안인지 확인하는 함수
 	inline bool IsValidLocation(uint8 InX, uint8 InY) const { return InX < Width && InY < Height; }
 
-private:
+public:
 	// 랜덤하게 시드를 선택한다는 상수
 	static constexpr int32 RandomSeed = -1;
 
+private:
 	// 미로의 가로 칸(Cell) 수
 	uint8 Width = 0;
 	// 미로의 세로 칸(Cell) 수

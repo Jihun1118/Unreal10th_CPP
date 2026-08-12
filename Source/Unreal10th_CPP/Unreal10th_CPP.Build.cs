@@ -10,7 +10,7 @@ public class Unreal10th_CPP : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { 
 			"Core", "CoreUObject", "Engine", "InputCore", 
-			"EnhancedInput", "UMG", "Slate", "SlateCore", "Niagara" });
+			"EnhancedInput", "UMG", "Slate", "SlateCore", "Niagara", "NavigationSystem" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
