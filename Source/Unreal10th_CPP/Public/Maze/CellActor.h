@@ -19,6 +19,9 @@ public:
 	// CellData 기반으로 경로 설정하고 문열기
 	void InitializeCell(FCellData* InCellData);
 
+	// 셀 한변의 절반 크기 리턴
+	float GetCellHalfSize() const { return CellHalfSize; }
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
