@@ -18,8 +18,8 @@ void FMazeData::MakeMaze(uint8 InWidth, uint8 InHeight, EMazeAlgorithm InAlgorit
 {
 	ClearMaze();					// 이전에 만들어진 데이터 삭제하기
 
-	Width = InWidth;
-	Height = InHeight;
+	Width = FMath::Clamp(InWidth, MinimumSize, MaximumSize);	// 가로 세로 크기는 3~100으로 한정
+	Height = FMath::Clamp(InHeight, MinimumSize, MaximumSize);
 
 	if (InSeed == RandomSeed)
 	{

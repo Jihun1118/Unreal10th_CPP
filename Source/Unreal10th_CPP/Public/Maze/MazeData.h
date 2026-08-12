@@ -73,9 +73,13 @@ public:
 
 private:
 	// 미로의 가로 칸(Cell) 수
-	uint8 Width = 0;
+	uint8 Width = 3;
 	// 미로의 세로 칸(Cell) 수
-	uint8 Height = 0;
+	uint8 Height = 3;
+
+	// 가로 세로의 최소/최대 크기
+	static constexpr uint8 MinimumSize = 3;
+	static constexpr uint8 MaximumSize = 100;
 
 	// 미로의 모든 칸(Cell)이 들어있는 배열
 	TArray<FCellData> Cells;
