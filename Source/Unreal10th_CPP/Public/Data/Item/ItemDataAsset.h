@@ -24,15 +24,21 @@ protected:
 	virtual void OnAsyncRequest(TArray<FSoftObjectPath>& InOutArray) const;
 
 public:	
-
+	// 아이템 이름
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Base|Data")
 	FText DisplayName;
 
+	// 아이템 설명
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Base|Data")
 	FText Description;
 	
+	// 아이템 가격
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Base|Data")
 	int32 Price = 1;
+
+	// 아이템이 인벤토리 한칸에 쌓일 수 있는 최대 수
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Base|Data")
+	int32 MaxStackCount = 1;
 
 	// 스폰할 클래스
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Base|Spawn")
