@@ -9,6 +9,7 @@
 #include "CommonHeader/ItemDropTable.h"
 #include "Item/PickupBase.h"
 #include "Item/PickupWeapon.h"
+#include "Framework/SubSystem/PickupFactorySubsystem.h"
 
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
@@ -76,22 +77,20 @@ void AEnemyCharacter::OnItemDrop()
 			// 드랍 확률 체크
 			if (FMath::FRand() > Row->DropRate) continue;
 
-			UItemDataAsset* PickupData = Row->PickupData;
-			if (!PickupData->IsLoaded())
+			UPickupFactorySubsystem* PickupFactory = GetWorld()->GetSubsystem<UPickupFactorySubsystem>();
+			if (PickupFactory)
 			{
-				PickupData->RequestDataLoad(
-					FStreamableDelegate::CreateWeakLambda(
+				//PickupFactory->SpawnPickup(Row->PickupData, GetActorTransform());
+				PickupFactory->SpawnPickupAsync(Row->PickupData, GetActorTransform(),
+					FOnPickupSpawned::CreateWeakLambda(
 						this,
-						[this, PickupData]()
-						{							
-							SpawnPickup(PickupData);
-						}));
-			}
-			else
-			{
-				SpawnPickup(PickupData);
-			}
-			
+						[](APickupBase* InSpawned)
+						{
+							UE_LOG(LogTemp, Log, TEXT("%s가 스폰되었습니다."), *InSpawned->GetName());
+						}
+					)
+				);				
+			}			
 		}
 	}
 }

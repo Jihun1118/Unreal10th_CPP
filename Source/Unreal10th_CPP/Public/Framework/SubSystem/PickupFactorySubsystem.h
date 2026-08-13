@@ -10,7 +10,8 @@
 class APickupBase;
 class UItemDataAsset;
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FOnPickupSpawned, APickupBase*, SpawnedPickup);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnPickupSpawnedDynamic, APickupBase*, SpawnedPickup);
+DECLARE_DELEGATE_OneParam(FOnPickupSpawned, APickupBase*);
 /**
  * 
  */
@@ -25,9 +26,12 @@ public:
 	APickupBase* SpawnPickup(UItemDataAsset* InItemDataAsset, const FTransform& InTransform);
 
 	// 픽업 액터 스폰(비동기 방식, 로딩 완료 후 OnSpawned 델리게이트 호출)
-	UFUNCTION(BlueprintCallable, Category = "Factory|Pickup")
 	void SpawnPickupAsync(UItemDataAsset* InItemDataAsset, const FTransform& InTransform,
 		FOnPickupSpawned OnSpawned);
+
+	UFUNCTION(BlueprintCallable, Category = "Factory|Pickup", meta = (DisplayName = "Spawn Pickup Async"))
+	void K2_SpawnPickupAsync(UItemDataAsset* InItemDataAsset, const FTransform& InTransform,
+		FOnPickupSpawnedDynamic OnSpawned);
 
 	// USubSystem 함수 오버라이드 ------------------------------------------------------------
 	// 서브시스템을 만들지 여부를 결정하는 함수

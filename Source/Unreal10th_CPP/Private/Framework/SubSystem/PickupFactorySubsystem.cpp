@@ -107,6 +107,18 @@ void UPickupFactorySubsystem::SpawnPickupAsync(UItemDataAsset* InItemDataAsset, 
     }
 }
 
+void UPickupFactorySubsystem::K2_SpawnPickupAsync(UItemDataAsset* InItemDataAsset, const FTransform& InTransform, FOnPickupSpawnedDynamic OnSpawned)
+{
+    SpawnPickupAsync(InItemDataAsset, InTransform,
+        FOnPickupSpawned::CreateLambda(
+            [OnSpawned](APickupBase* SpawnedPickup)
+            {
+                OnSpawned.ExecuteIfBound(SpawnedPickup);
+            }
+        )
+    );
+}
+
 APickupBase* UPickupFactorySubsystem::SpawnProcess(UItemDataAsset* InItemDataAsset, const FTransform& InTransform)
 {
     UWorld* World = GetWorld();
@@ -136,7 +148,6 @@ APickupBase* UPickupFactorySubsystem::SpawnProcess(UItemDataAsset* InItemDataAss
     }
     else
     {
-        Spawned->InitializePickup(InItemDataAsset);
         UE_LOG(LogTemp, Error, TEXT("[PickupFactorySubsystem] : %s를 스폰하는데 실패했습니다."),
             *InItemDataAsset->DisplayName.ToString());
     }
