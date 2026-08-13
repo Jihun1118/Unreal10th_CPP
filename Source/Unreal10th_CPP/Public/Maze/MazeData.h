@@ -23,7 +23,7 @@ public:
 
 private:
 	// 윌슨 알고리즘을 실행하는 함수
-	void WillsonAlgorithmExecute();
+	void WilsonAlgorithmExecute();
 
 	// 리커시브 백트래킹 알고리즘을 실행하는 함수
 	void RecursiveBacktrackingAlgorithmExecute();
