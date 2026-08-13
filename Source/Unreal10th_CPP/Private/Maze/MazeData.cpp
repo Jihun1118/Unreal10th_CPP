@@ -37,7 +37,7 @@ void FMazeData::MakeMaze(uint8 InWidth, uint8 InHeight, EMazeAlgorithm InAlgorit
 	switch (InAlgorithm)
 	{
 	case EMazeAlgorithm::Wilson:
-		WillsonAlgorithmExecute();
+		WilsonAlgorithmExecute();
 		break;
 	case EMazeAlgorithm::RecursiveBacktracking:
 		RecursiveBacktrackingAlgorithmExecute();
@@ -46,7 +46,7 @@ void FMazeData::MakeMaze(uint8 InWidth, uint8 InHeight, EMazeAlgorithm InAlgorit
 		EllerAlgorithmExecute();
 		break;
 	default:
-		WillsonAlgorithmExecute();
+		WilsonAlgorithmExecute();	// 윌슨이 디폴트
 		break;
 	}
 }
@@ -58,13 +58,13 @@ void FMazeData::ClearMaze()
 	Cells.Empty();
 }
 
-void FMazeData::WillsonAlgorithmExecute()
+void FMazeData::WilsonAlgorithmExecute()
 {
 	// 윌슨 알고리즘 전용 연속 메모리 임시 배열 (Scratchpad)
-	TArray<FWillsonCellData> WillsonCells;
+	TArray<FWilsonCellData> WillsonCells;
 	WillsonCells.SetNum(Width * Height);
 
-	TArray<FWillsonCellData*> NotInMazeCells;
+	TArray<FWilsonCellData*> NotInMazeCells;
 	NotInMazeCells.Reserve(Width * Height);
 
 	for (uint8 y = 0; y < Height; y++)
@@ -72,7 +72,7 @@ void FMazeData::WillsonAlgorithmExecute()
 		for (uint8 x = 0; x < Width; x++)
 		{
 			uint16 Index = LocationToIndex(x, y);
-			FWillsonCellData& Cell = WillsonCells[Index];
+			FWilsonCellData& Cell = WillsonCells[Index];
 			Cell.X = x;
 			Cell.Y = y;
 			Cell.Path = EDirectionType::None;
@@ -84,18 +84,18 @@ void FMazeData::WillsonAlgorithmExecute()
 	ShuffleArray(NotInMazeCells);
 
 	// 윌슨 알고리즘 시작
-	FWillsonCellData* InitCell = NotInMazeCells.Pop();	// 미로가 아닌 셀 중 하나를 초기셀로 지정하고 셀 목록에서 제거
+	FWilsonCellData* InitCell = NotInMazeCells.Pop();	// 미로가 아닌 셀 중 하나를 초기셀로 지정하고 셀 목록에서 제거
 	InitCell->bInMaze = true;
 
 	while (NotInMazeCells.Num() > 0)	// 미로에 포함되지 않은 셀이 남아있으면 계속 반복
 	{	
-		FWillsonCellData* StartCell = NotInMazeCells.Pop();	// 미로에 포함되지 않은 셀 중 하나를 랜덤으로 선택
+		FWilsonCellData* StartCell = NotInMazeCells.Pop();	// 미로에 포함되지 않은 셀 중 하나를 랜덤으로 선택
 		if (StartCell->bInMaze)
 		{
 			continue;	// 이미 미로에 포함된 셀은 스킵(NotInMazeCells에서 제거하는 역할)
 		}
 
-		FWillsonCellData* CurrentCell = StartCell;
+		FWilsonCellData* CurrentCell = StartCell;
 		do
 		{
 			// 랜덤 워크 진행
@@ -106,13 +106,13 @@ void FMazeData::WillsonAlgorithmExecute()
 				NeighborLoc = CurrentCell->GetLocation() + Direction[DirIdx];
 			} while (!IsValidLocation(NeighborLoc.X, NeighborLoc.Y));
 
-			FWillsonCellData* NeighborCell = &WillsonCells[LocationToIndex(NeighborLoc.X, NeighborLoc.Y)];
+			FWilsonCellData* NeighborCell = &WillsonCells[LocationToIndex(NeighborLoc.X, NeighborLoc.Y)];
 			CurrentCell->NextCell = NeighborCell;	// 다음 셀로 저장하고
 			CurrentCell = NeighborCell;				// 이웃 셀 기준으로 계속 진행
 		} while (!CurrentCell->bInMaze);
 
 		// 경로에 따라 미로에 포함시키기
-		FWillsonCellData* Path = StartCell;
+		FWilsonCellData* Path = StartCell;
 		while (Path != CurrentCell)	// 미로에 포함되어 있는 셀에 도달할 때까지 반복
 		{
 			Path->bInMaze = true;					// 미로에 포함시키고

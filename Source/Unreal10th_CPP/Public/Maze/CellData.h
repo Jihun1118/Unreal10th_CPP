@@ -54,14 +54,14 @@ public:
 /**
  * 윌슨 알고리즘 생성을 위한 셀 데이터 구조체
  */
-struct UNREAL10TH_CPP_API FWillsonCellData : public FCellData
+struct UNREAL10TH_CPP_API FWilsonCellData : public FCellData
 {
 public:
 	// 미로 생성 과정에서 이 셀이 미로에 포함되어 있는지 여부
 	bool bInMaze = false;
 
 	// 미로 생성 과정에서 다음 셀을 기록하기 위한 변수
-	FWillsonCellData* NextCell = nullptr;
+	FWilsonCellData* NextCell = nullptr;
 };
 
 /**
