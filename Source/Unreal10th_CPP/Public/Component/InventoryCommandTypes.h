@@ -50,3 +50,17 @@ public:
 	}
 
 };
+
+USTRUCT(BlueprintType)
+struct UNREAL10TH_CPP_API FInventoryCommandResult
+{
+	GENERATED_BODY()
+
+	// 커맨드 성공 여부
+	UPROPERTY(BlueprintReadOnly)
+	bool bSuccess = false;
+
+	// Add 커맨드용 변수(인벤토리에 들어가지 못한 아이템 개수)
+	UPROPERTY(BlueprintReadOnly)
+	int32 RemainingCount = 0;
+};

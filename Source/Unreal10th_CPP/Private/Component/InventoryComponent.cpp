@@ -14,9 +14,27 @@ UInventoryComponent::UInventoryComponent()
 	Slots.SetNum(InventorySize + 1);	// 일반 슬롯 10개 + 임시 슬롯 1개
 }
 
-bool UInventoryComponent::ExecuteCommand(const FInventoryCommand& Command)
+bool UInventoryComponent::ExecuteCommand(const FInventoryCommand& Command, FInventoryCommandResult& OutResult)
 {
-	return false;
+	switch (Command.Type)
+	{
+	case EInventoryCommandType::Add:
+		HandleAddCommand(Command.ItemData, Command.Count, OutResult);
+		if (OutResult.bSuccess)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[%s] 추가가 성공적으로 완료되었습니다."), *(Command.ItemData->DisplayName.ToString()));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("%d개의 아이템이 남았습니다."), OutResult.RemainingCount);
+		}
+		break;
+	default:
+		UE_LOG(LogTemp, Warning, TEXT("알 수 없는 커맨드 입니다."));
+		break;
+	}
+
+	return OutResult.bSuccess;
 }
 
 void UInventoryComponent::AddMoney(int32 InIncome)
@@ -24,7 +42,7 @@ void UInventoryComponent::AddMoney(int32 InIncome)
 	Money += InIncome;
 }
 
-int32 UInventoryComponent::AddItem(UItemDataAsset* InItemData, int32 InCount)
+int32 UInventoryComponent::AddItem(const UItemDataAsset* InItemData, int32 InCount)
 {
 	if (!InItemData)
 	{
@@ -94,7 +112,7 @@ FInvenSlot* UInventoryComponent::GetTempSlot()
 	return &Slots[InventorySize];	// 무조건 마지막 슬롯이 Temp슬롯
 }
 
-void UInventoryComponent::SetSlot(int32 InSlotIndex, UItemDataAsset* InItemData, int32 InCount)
+void UInventoryComponent::SetSlot(int32 InSlotIndex, const UItemDataAsset* InItemData, int32 InCount)
 {
 	if (!IsValidIndex(InSlotIndex)) return;
 
@@ -122,56 +140,24 @@ void UInventoryComponent::ClearSlot(int32 InSlotIndex)
 }
 
 
-bool UInventoryComponent::HandleAddCommand(const UItemDataAsset* InItemData, int32 InCount)
+bool UInventoryComponent::HandleAddCommand(
+	const UItemDataAsset* InItemData, int32 InCount, FInventoryCommandResult& OutResult)
 {
-	//if (!InItemData)
-	//{
-	//	UE_LOG(LogTemp, Warning, TEXT("InItemData가 null입니다."));
-	//	return InCount;
-	//}
-	//if (InCount <= 0)
-	//{
-	//	UE_LOG(LogTemp, Warning, TEXT("InCount가 0이하 입니다."));
-	//	return InCount;
-	//}
+	int32 RemainingCount = AddItem(InItemData, InCount);
 
-	//int32 RemainingCount = InCount;
-
-	//int32 StartIndex = 0;
-	//// 같은 종류의 아이템이 있는 슬롯을 찾아 최대한 채우기
-	//while (RemainingCount > 0)	// 남는게 있으면 계속 반복
-	//{
-	//	// 같은 종류의 아이템이 들어있는 슬롯을 찾아 추가하기
-	//	int32 FoundIndex = FindSlotWithItem(InItemData, StartIndex);
-	//	if (FoundIndex == InventoryFail) break;	// 같은 종류의 아이템이 들어있는 슬롯이 없으면 종료
-
-	//	// 같은 종류의 아이템이 들어있는 슬롯을 찾았다.
-	//	FInvenSlot& Slot = Slots[FoundIndex];
-	//	int32 AmountToAdd = FMath::Min(Slot.GetRemainingCount(), RemainingCount);
-	//	UpdateSlotCount(FoundIndex, AmountToAdd);	// FoundIndex 슬롯에 채울 수 있는 만큼 채우기
-
-	//	RemainingCount -= AmountToAdd;	// 남은 개수 갱신
-	//	StartIndex = FoundIndex + 1;	// 새 시작 위치 갱신
-	//}
-
-	//// 빈슬롯을 찾아 최대한 채우기
-	//while (RemainingCount > 0)
-	//{
-	//	int32 EmptyIndex = FindEmptySlot();
-	//	if (EmptyIndex == InventoryFail) break;	// 빈슬롯이 없으면 종료
-
-	//	FInvenSlot& Slot = Slots[EmptyIndex];
-	//	int32 AmountToAdd = FMath::Min(InItemData->MaxStackCount, RemainingCount);
-	//	SetSlot(EmptyIndex, InItemData, AmountToAdd);	// EmptyIndex 슬롯에 아이템 설정
-
-	//	RemainingCount -= AmountToAdd;	// 남은 개수 갱신
-	//}
-
-	// RemainingCount가 0이면 인벤토리에 잘 들어감. 0을 초과하면 그만큼은 인벤토리에 못들어갔다는 의미
-	//return RemainingCount;
-
-	//return RemainingCount == 0;
-	return false;
+	//RemainingCount가 0이면 인벤토리에 잘 들어갔음. 0을 초과하면 그만큼은 인벤토리에 못들어갔다는 의미
+	if (RemainingCount > 0)
+	{
+		OutResult.bSuccess = false;
+		OutResult.RemainingCount = RemainingCount;
+	}
+	else
+	{
+		OutResult.bSuccess = true;
+		OutResult.RemainingCount = 0;
+	}
+	
+	return OutResult.bSuccess;
 }
 
 // Called when the game starts

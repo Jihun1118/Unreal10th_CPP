@@ -17,7 +17,7 @@ struct FInvenSlot
 public:
 	// 이 슬롯에 들어있는 아이템의 종류
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Slot")
-	TObjectPtr<UItemDataAsset> ItemData;
+	TObjectPtr<const UItemDataAsset> ItemData;
 
 protected:
 	// 이 슬롯에 들어있는 아이템의 개수
@@ -69,18 +69,7 @@ public:
 
 	// 커맨드 실행용 함수
 	UFUNCTION(BlueprintCallable, Category = "Inventory|Command")
-	bool ExecuteCommand(const FInventoryCommand& Command);
-
-	// 인벤토리에 돈을 추가하거나 감소시키는 함수
-	UFUNCTION(BlueprintCallable)
-	void AddMoney(int32 InIncome);
-
-	// 인벤토리에 아이템을 추가하는 함수
-	UFUNCTION(BlueprintCallable)
-	int32 AddItem(UItemDataAsset* InItemData, int32 InCount);
-
-	// 인벤토리의 특정 슬롯에 들어있는 아이템 사용하는 함수
-	void UseItem(int32 InIndex);
+	bool ExecuteCommand(const FInventoryCommand& Command, FInventoryCommandResult& OutResult);
 
 	// Getter ------------------------------------------------------------
 	// 현재 돈을 리턴하는 함수
@@ -94,8 +83,19 @@ public:
 	// --------------------------------------------------------------------
 
 protected:
+	// 인벤토리에 돈을 추가하거나 감소시키는 함수
+	UFUNCTION(BlueprintCallable)
+	void AddMoney(int32 InIncome);
+
+	// 인벤토리에 아이템을 추가하는 함수
+	UFUNCTION(BlueprintCallable)
+	int32 AddItem(const UItemDataAsset* InItemData, int32 InCount);
+
+	// 인벤토리의 특정 슬롯에 들어있는 아이템 사용하는 함수
+	void UseItem(int32 InIndex);
+
 	// 특정 슬롯에 아이템과 개수를 설정하는 함수
-	void SetSlot(int32 InSlotIndex, UItemDataAsset* InItemData, int32 InCount);
+	void SetSlot(int32 InSlotIndex, const UItemDataAsset* InItemData, int32 InCount);
 	
 	// 특정 슬롯의 아이템 개수를 업데이트 하는 함수
 	void UpdateSlotCount(int32 InSlotIndex, int32 InDeltaCount);
@@ -108,7 +108,8 @@ protected:
 		return (InSlotIndex < InventorySize) && (InSlotIndex >= 0);
 	};
 
-	bool HandleAddCommand(const UItemDataAsset* InItemData, int32 InCount);
+	// Add 커맨드 처리용 함수
+	bool HandleAddCommand(const UItemDataAsset* InItemData, int32 InCount, FInventoryCommandResult& OutResult);
 
 	// 사용안함. Called when the game starts
 	virtual void BeginPlay() override;

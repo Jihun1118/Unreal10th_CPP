@@ -42,6 +42,11 @@ public:
 	virtual void EquipWeapon_Implementation(UWeaponDataAsset* InWeaponData) override;
 	//void UnEquipWeapon();
 	//-------------------------------------------------------------------------------------------------
+
+	// InventoryComponent로 전달할 함수들 -------------------------------------------------------------
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	virtual bool ExecuteInvectoryCommand(const FInventoryCommand& Command, FInventoryCommandResult& OutResult) override;
+	// -----------------------------------------------------------------------------------------------
 	
 
 protected:

@@ -8,6 +8,8 @@
 #include "InventoryUserInterface.generated.h"
 
 class UInventoryComponent;
+struct FInventoryCommand;
+struct FInventoryCommandResult;
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
@@ -26,4 +28,5 @@ class UNREAL10TH_CPP_API IInventoryUserInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	virtual UInventoryComponent* GetInventoryComponent() const = 0;
+	virtual bool ExecuteInvectoryCommand(const FInventoryCommand& Command, FInventoryCommandResult& OutResult) = 0;
 };

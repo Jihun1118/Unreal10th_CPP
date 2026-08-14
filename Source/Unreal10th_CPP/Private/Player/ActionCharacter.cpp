@@ -42,6 +42,15 @@ void AActionCharacter::EquipWeapon_Implementation(UWeaponDataAsset* InWeaponData
 	}
 }
 
+bool AActionCharacter::ExecuteInvectoryCommand(const FInventoryCommand& Command, FInventoryCommandResult& OutResult)
+{
+	if (GetInventoryComponent())
+	{
+		return InvenComponent->ExecuteCommand(Command, OutResult);
+	}
+	return false;
+}
+
 UStatComponent* AActionCharacter::GetStatComponent() const
 {
 	return StatComponent;
