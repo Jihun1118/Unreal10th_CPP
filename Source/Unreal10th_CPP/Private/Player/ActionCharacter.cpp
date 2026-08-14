@@ -4,6 +4,7 @@
 #include "Player/ActionCharacter.h"
 #include "Component/StatComponent.h"
 #include "Component/WeaponComponent.h"
+#include "Component/InventoryComponent.h"
 #include "Data/Item/WeaponDataAsset.h"
 
 #include "EnhancedInputComponent.h"
@@ -27,6 +28,7 @@ AActionCharacter::AActionCharacter()
 
 	StatComponent = CreateDefaultSubobject<UStatComponent>(TEXT("Stat"));
 	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("Weapon"));
+	InvenComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inven"));
 
 	bUseControllerRotationYaw = false;	// 컨트롤러 움직일 때 폰이 같이 회전되는 것 방지
 	GetCharacterMovement()->bOrientRotationToMovement = true;	// 캐릭터 이동방향으로 바라보게 만들기
@@ -48,6 +50,11 @@ UStatComponent* AActionCharacter::GetStatComponent() const
 UWeaponComponent* AActionCharacter::GetWeaponComponent() const
 {
 	return WeaponComponent;
+}
+
+UInventoryComponent* AActionCharacter::GetInventoryComponent() const
+{
+	return InvenComponent;
 }
 
 // Called when the game starts or when spawned
