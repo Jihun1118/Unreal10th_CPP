@@ -7,18 +7,17 @@
 #include "InputActionValue.h"
 #include "Interface/StatInterface.h"
 #include "Interface/WeaponUserInterface.h"
+#include "Interface/InventoryUserInterface.h"
 #include "ActionCharacter.generated.h"
 
 class UInputAction;
 class USpringArmComponent;
 class UCameraComponent;
-class UStatComponent;
-class UWeaponComponent;
 class UAnimNotifyState_SectionJump;
-class UWeaponDataAsset;
 
 UCLASS()
-class UNREAL10TH_CPP_API AActionCharacter : public ACharacter, public IStatInterface, public IWeaponUserInterface
+class UNREAL10TH_CPP_API AActionCharacter 
+	: public ACharacter, public IStatInterface, public IWeaponUserInterface, public IInventoryUserInterface
 {
 	GENERATED_BODY()
 
@@ -35,11 +34,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	virtual UWeaponComponent* GetWeaponComponent() const override;
 
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	virtual UInventoryComponent* GetInventoryComponent() const override;
+
 	// WeaponComponent로 전달할 함수들 ---------------------------------------------------------------
 	// 무기 장비 관련 함수들
 	virtual void EquipWeapon_Implementation(UWeaponDataAsset* InWeaponData) override;
 	//void UnEquipWeapon();
 	//-------------------------------------------------------------------------------------------------
+
+	// InventoryComponent로 전달할 함수들 -------------------------------------------------------------
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	virtual bool ExecuteInvectoryCommand(const FInventoryCommand& Command, FInventoryCommandResult& OutResult) override;
+	// -----------------------------------------------------------------------------------------------
 	
 
 protected:
@@ -130,6 +137,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWeaponComponent> WeaponComponent = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UInventoryComponent> InvenComponent = nullptr;
 
 private:
 	UPROPERTY()

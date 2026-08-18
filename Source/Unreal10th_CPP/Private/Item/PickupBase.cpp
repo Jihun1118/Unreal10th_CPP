@@ -5,6 +5,9 @@
 #include "Components/SphereComponent.h"
 #include "Components/MeshComponent.h"
 #include "NiagaraComponent.h"
+#include "Interface/InventoryUserInterface.h"
+#include "Component/InventoryCommandTypes.h"
+#include "Framework/SubSystem/PickupFactorySubsystem.h"
 #include "Unreal10th_CPP/Unreal10th_CPP.h"
 
 // Sets default values
@@ -57,9 +60,45 @@ void APickupBase::NotifyActorBeginOverlap(AActor* OtherActor)
 
 void APickupBase::OnPickup(AActor* InTarget)
 {
-	UE_LOG(LogTemp, Log, TEXT("%s(이)가 %s를 획득했습니다."), 
+	UE_LOG(LogTemp, Log, TEXT("[APickupBase] : %s(이)가 %s를 획득했습니다."), 
 		InTarget ? *InTarget->GetName() : TEXT("알 수 없는 대상"), *this->GetName());
 	bIdle = false;
+
+	if (IInventoryUserInterface* Inven = Cast<IInventoryUserInterface>(InTarget))
+	{
+		FInventoryCommand Command = FInventoryCommand::MakeAdd(DataAsset, 1);
+		FInventoryCommandResult Result;
+		if (!Inven->ExecuteInvectoryCommand(Command, Result))
+		{
+			UPickupFactorySubsystem* Factory = GetWorld()->GetSubsystem<UPickupFactorySubsystem>();
+			FTransform SpawnTransform = InTarget->GetActorTransform();
+			SpawnTransform.AddToTranslation(FVector::UpVector * 300.0f);
+			Factory->SpawnPickupAsync(DataAsset, SpawnTransform,
+				FOnPickupSpawned::CreateWeakLambda(
+					this,
+					[this](APickupBase* InSpawned)
+					{
+						UE_LOG(LogTemp, Log, TEXT("%s가 스폰되었습니다."), *InSpawned->GetName());
+						OnFinishPickupEffect();
+					}
+				));
+		}
+		else
+		{
+			OnFinishPickupEffect();
+		}
+	}
+
+}
+
+void APickupBase::OnUpdatePickupEffect()
+{
+
+}
+
+void APickupBase::OnFinishPickupEffect()
+{
+	Destroy();
 }
 
 void APickupBase::OnUpdateUpdownSpin(float InDeltaTime)

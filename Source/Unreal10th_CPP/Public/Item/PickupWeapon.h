@@ -25,8 +25,8 @@ protected:
 	virtual UMeshComponent* GetMesh() const override { return Mesh; };
 	virtual void OnPickup(AActor* InTarget) override;
 
-	virtual void OnUpdatePickupEffect();
-	virtual void OnFinishPickupEffect();
+	virtual void OnUpdatePickupEffect() override;
+	virtual void OnFinishPickupEffect() override;
 
 
 private:

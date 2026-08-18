@@ -32,6 +32,9 @@ protected:
 	// 오버랩 됬을 때 대상에게 실제 작업을 처리하는 함수
 	virtual void OnPickup(AActor* InTarget);
 
+	virtual void OnUpdatePickupEffect();
+	virtual void OnFinishPickupEffect();
+
 	virtual void OnUpdateUpdownSpin(float InDeltaTime);
 
 	virtual UMeshComponent* GetMesh() const;
