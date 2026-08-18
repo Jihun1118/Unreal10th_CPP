@@ -21,13 +21,17 @@ public:
 	virtual void InitializePickup(UItemDataAsset* InData);
 
 protected:
+	virtual void OnConstruction(const FTransform& Transform) override;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+	// 오버랩 델리게이트에 바인딩 할 함수
+	UFUNCTION()
+	void OnBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
 	// 오버랩 됬을 때 대상에게 실제 작업을 처리하는 함수
 	virtual void OnPickup(AActor* InTarget);
@@ -41,6 +45,7 @@ protected:
 
 private:
 	bool IsCurveAssetReady() const;
+	bool IsPickupEffectAssetReady() const;
 
 protected:
 	// 메시의 기본 위치
@@ -51,21 +56,46 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Base Data")
 	TObjectPtr<UItemDataAsset> DataAsset;
 
+	// 스폰 직후에 아이템이 안먹어지는 시간
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Base Data")
+	float PickupDelayTime = 1.0f;
+
 	// 맵에 있을 때 위아래로 왕복하는 모습용 커브
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effect|Default")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effect|Spawn")
 	TObjectPtr<UCurveFloat> UpDownCurve;
 
 	// 맵에 있을 때 회전하는 모습용 커브
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effect|Default")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effect|Spawn")
 	TObjectPtr<UCurveFloat> SpinCurve;
 
 	// 위아래로 왕복하는데 걸리는 시간
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effect|Default", meta = (ClampMin = "0.001"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effect|Spawn", meta = (ClampMin = "0.001"))
 	float UpDownDuration = 2.0f;
 
 	// 위아래로 움직이는 거리
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effect|Default")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effect|Spawn")
 	float UpDownHeight = 100.0f;	
+
+protected:
+	// 아이템을 줍는 연출의 진행 상황용 커브
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effect|Pickup")
+	TObjectPtr<UCurveFloat> PickupAlpha;
+
+	// 아이템을 줍는 연출 중 위 아래로 움직임을 위한 커브
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effect|Pickup")
+	TObjectPtr<UCurveFloat> PickupHeight;
+
+	// 아이템을 줍는 연출 중 크기 변경을 위한 커브
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effect|Pickup")
+	TObjectPtr<UCurveFloat> PickupScale;
+
+	// 아이템을 줍는 연출의 전체 진행 시간
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effect|Pickup")
+	float PickupEffectDuration = 0.5f;
+
+	// PickupHeight로 인해 올라가는 높이
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effect|Pickup")
+	float PickupEffecHeight = 50.0f;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -75,7 +105,25 @@ protected:
 	TObjectPtr<UNiagaraComponent> NiagaraComponent;
 
 private:
+	// 스폰 연출용 누적 시간
 	float ElapsedTime = 0.0f;
+
+	// 스폰용 연출 On/Off
 	bool bIdle = true;	
+
+	// 아이템을 줍는 연출용 타이머 핸들
+	FTimerHandle PickupEffectTimerHandle;
+
+	// 아이템을 줍는 대상
+	TWeakObjectPtr<AActor> TargetActor = nullptr;
+
+	// 아이템을 줍는 연출이 진행된 시간
+	float PickupElapsedTime = 0.0f;
+
+	// 아이템을 줍는 연출용 타이머의 실행 간격
+	const float TimerInterval = 0.02f;
+
+	// 아이템을 줍는 연출용 시작 위치
+	FVector PickupStartLocation;
 
 };
