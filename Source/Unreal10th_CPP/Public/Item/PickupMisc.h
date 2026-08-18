@@ -20,7 +20,6 @@ public:
 	virtual void InitializePickup(UItemDataAsset* InData) override;
 	
 protected:
-	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual UMeshComponent* GetMesh() const override { return Mesh; };
 
 protected:

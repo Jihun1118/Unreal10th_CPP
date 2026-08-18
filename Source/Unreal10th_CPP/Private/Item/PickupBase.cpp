@@ -34,11 +34,29 @@ void APickupBase::InitializePickup(UItemDataAsset* InData)
 	DataAsset = InData;
 }
 
+void APickupBase::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	InitializePickup(DataAsset);
+}
+
 // Called when the game starts or when spawned
 void APickupBase::BeginPlay()
 {
 	Super::BeginPlay();
 	ElapsedTime = 0.0f;
+
+	FTimerHandle PickupDelayHandle;
+	GetWorld()->GetTimerManager().SetTimer(
+		PickupDelayHandle,
+		[this]()
+		{
+			UE_LOG(LogTemp, Log, TEXT("픽업을 획득할 수 있습니다."));
+			OnActorBeginOverlap.AddDynamic(this, &APickupBase::OnBeginOverlap);
+		},
+		PickupDelayTime,
+		false
+	);
 }
 
 // Called every frame
@@ -52,53 +70,106 @@ void APickupBase::Tick(float DeltaTime)
 	}
 }
 
-void APickupBase::NotifyActorBeginOverlap(AActor* OtherActor)
+void APickupBase::OnBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
 {
-	Super::NotifyActorBeginOverlap(OtherActor);
 	OnPickup(OtherActor);
 }
 
 void APickupBase::OnPickup(AActor* InTarget)
 {
+	if (GetWorldTimerManager().IsTimerActive(PickupEffectTimerHandle)) return;	// 타이머가 이미 작동중이면 종료(중복실행 방지)
+
 	UE_LOG(LogTemp, Log, TEXT("[APickupBase] : %s(이)가 %s를 획득했습니다."), 
 		InTarget ? *InTarget->GetName() : TEXT("알 수 없는 대상"), *this->GetName());
 	bIdle = false;
 
-	if (IInventoryUserInterface* Inven = Cast<IInventoryUserInterface>(InTarget))
+	TargetActor = InTarget;
+
+	// 커브 에셋이 준비되어 있고 메시 컴포넌트가 있으면 연출 시작, 없으면 즉시 획득 처리
+	if (IsPickupEffectAssetReady() && GetMesh())	
+	{
+		// 더 이상의 오버랩이 발생하지 않게 하기
+		SphereCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		PickupStartLocation = GetMesh()->GetComponentLocation();
+		PickupElapsedTime = 0.0f;
+
+		GetWorldTimerManager().SetTimer(
+			PickupEffectTimerHandle,
+			this,
+			&APickupBase::OnUpdatePickupEffect,
+			TimerInterval,
+			true
+		);
+	}
+	else
+	{
+		OnFinishPickupEffect();
+	}
+}
+
+void APickupBase::OnUpdatePickupEffect()
+{
+	if (!TargetActor.IsValid() || !GetMesh())	// 타겟이 없거나 메시가 없으면 즉시 획득 처리
+	{
+		OnFinishPickupEffect();
+		return;
+	}
+
+	PickupElapsedTime += TimerInterval;
+	float Div = FMath::Max(PickupEffectDuration, 0.001f);
+	float Progress = PickupElapsedTime / Div;
+
+	float DistanceAlpha = PickupAlpha->GetFloatValue(Progress);
+	FVector Goal = TargetActor.Get()->GetActorLocation();
+	FVector NewLocation = FMath::Lerp(PickupStartLocation, Goal, DistanceAlpha);
+
+	float HeightOffset = PickupHeight->GetFloatValue(Progress) * PickupEffecHeight;
+	NewLocation.Z += HeightOffset;
+	GetMesh()->SetWorldLocation(NewLocation);
+
+	float Scale = PickupScale->GetFloatValue(Progress);
+	GetMesh()->SetRelativeScale3D(FVector(Scale));
+
+	if (Progress >= 1.0f)
+	{
+		OnFinishPickupEffect();
+	}
+}
+
+void APickupBase::OnFinishPickupEffect()
+{
+	// 획득 이팩트용 타이머 클리어
+	GetWorldTimerManager().ClearTimer(PickupEffectTimerHandle);
+
+	// 대상의 인벤토리에 아이템 추가
+	if (IInventoryUserInterface* Inven = Cast<IInventoryUserInterface>(TargetActor))
 	{
 		FInventoryCommand Command = FInventoryCommand::MakeAdd(DataAsset, 1);
 		FInventoryCommandResult Result;
 		if (!Inven->ExecuteInvectoryCommand(Command, Result))
 		{
+			// 실패하면 다시 스폰
 			UPickupFactorySubsystem* Factory = GetWorld()->GetSubsystem<UPickupFactorySubsystem>();
-			FTransform SpawnTransform = InTarget->GetActorTransform();
-			SpawnTransform.AddToTranslation(FVector::UpVector * 300.0f);
+			FTransform SpawnTransform = TargetActor->GetActorTransform();
+			FVector NewLocation(FMath::RandPointInCircle(300.0f), 0.0f);	// 액터 위치를 중심으로 반경 3m의 서클 안 랜덤 위치
+			SpawnTransform.AddToTranslation(NewLocation);
 			Factory->SpawnPickupAsync(DataAsset, SpawnTransform,
 				FOnPickupSpawned::CreateWeakLambda(
 					this,
 					[this](APickupBase* InSpawned)
 					{
 						UE_LOG(LogTemp, Log, TEXT("%s가 스폰되었습니다."), *InSpawned->GetName());
-						OnFinishPickupEffect();
+						Destroy(); // 기존에 먹었던 픽업은 삭제
 					}
 				));
 		}
 		else
 		{
-			OnFinishPickupEffect();
+			// 성공했으면 인벤토리에 들어갔으니 픽업 삭제
+			Destroy();
 		}
-	}
-
-}
-
-void APickupBase::OnUpdatePickupEffect()
-{
-
-}
-
-void APickupBase::OnFinishPickupEffect()
-{
-	Destroy();
+	}	
 }
 
 void APickupBase::OnUpdateUpdownSpin(float InDeltaTime)
@@ -131,3 +202,7 @@ bool APickupBase::IsCurveAssetReady() const
 	return UpDownCurve != nullptr && SpinCurve != nullptr;
 }
 
+bool APickupBase::IsPickupEffectAssetReady() const
+{
+	return PickupAlpha != nullptr && PickupHeight != nullptr && PickupScale != nullptr;
+}
