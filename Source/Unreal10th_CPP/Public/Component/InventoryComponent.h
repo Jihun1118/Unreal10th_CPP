@@ -108,8 +108,13 @@ protected:
 		return (InSlotIndex < InventorySize) && (InSlotIndex >= 0);
 	};
 
-	// Add 커맨드 처리용 함수
+	// 커맨드 핸들링 함수들 ----------------------------------------------------------------------------------------
 	bool HandleAddCommand(const UItemDataAsset* InItemData, int32 InCount, FInventoryCommandResult& OutResult);
+	bool HandleMoveCommand(int32 InSourceIndex, int32 InTargetIndex, FInventoryCommandResult& OutResult);
+	bool HandleDropCommand(int32 InSlotIndex, const FVector& InDropLocation, FInventoryCommandResult& OutResult);
+	bool HandleUseCommand(int32 InSlotIndex, FInventoryCommandResult& OutResult);
+	bool HandleMoneyCommand(int32 InMoneyDiff, FInventoryCommandResult& OutResult);
+	// ------------------------------------------------------------------------------------------------------------
 
 	// 사용안함. Called when the game starts
 	virtual void BeginPlay() override;
