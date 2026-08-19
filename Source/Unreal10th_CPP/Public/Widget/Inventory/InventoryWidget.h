@@ -30,6 +30,10 @@ public:
 	// 인벤토리 닫기
 	void CloseInventoryWidget();
 
+#if WITH_EDITOR
+	void TestRefresh();
+#endif
+
 protected:
 	// 인벤토리 위젯 전체 갱신
 	void RefreshInventoryWidget() const;
@@ -44,6 +48,9 @@ private:
 	// CloseButton이 눌려졌을 때 실행될 함수
 	UFUNCTION()
 	void OnClickedCloseButton();
+
+	// 확인할 인덱스가 유효한 범위인지 확인
+	inline bool IsValidIndex(int32 InIndex) const { return InIndex >= 0 && InIndex < SlotSize; }
 
 protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -61,5 +68,8 @@ private:
 
 	UPROPERTY()
 	TArray<TObjectPtr<UInventorySlotWidget>> SlotWidgets;
+
+	// 슬롯의 개수(위젯의 슬롯 개수와 컴포넌트의 슬롯 개수 중 작은 수)
+	int32 SlotSize = 0;
 
 };

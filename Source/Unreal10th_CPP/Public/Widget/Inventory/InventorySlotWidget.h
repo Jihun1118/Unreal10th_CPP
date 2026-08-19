@@ -52,5 +52,6 @@ private:
 	int32 Index = InvalidIndex;
 
 	// 인벤토리의 슬롯
-	FInvenSlot* Slot = nullptr;	// 구조체는 TWeakObjectPtr로 저장안됨
+	const FInvenSlot* Slot = nullptr;	// 구조체는 TWeakObjectPtr로 저장안됨
+	
 };

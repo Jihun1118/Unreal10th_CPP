@@ -7,6 +7,7 @@
 #include "Components/Button.h"
 #include "Components/UniformGridPanel.h"
 #include "Component/InventoryComponent.h"
+#include "Interface/InventoryUserInterface.h"
 
 
 void UInventoryWidget::InitializeInventoryWidget(UInventoryComponent* InInven)
@@ -20,14 +21,17 @@ void UInventoryWidget::InitializeInventoryWidget(UInventoryComponent* InInven)
 		return;
 	}
 
+	TargetInventory->OnSlotChanged.BindUObject(this, &UInventoryWidget::RefreshSlotWidget);
+	TargetInventory->OnMoneyChanged.AddUObject(this, &UInventoryWidget::RefreshMoneyPanel);
+
 	if (SlotGridPanel)
 	{
 		int32 ChildCount = SlotGridPanel->GetChildrenCount();
 		int32 InvenSize = TargetInventory->GetSize();
-		int32 Size = FMath::Min(ChildCount, InvenSize);
+		SlotSize = FMath::Min(ChildCount, InvenSize);
 
-		SlotWidgets.Empty(Size);
-		for (int i = 0; i < Size; i++)
+		SlotWidgets.Empty(SlotSize);
+		for (int i = 0; i < SlotSize; i++)
 		{
 			if (UInventorySlotWidget* SlotWidget = Cast<UInventorySlotWidget>(SlotGridPanel->GetChildAt(i)))
 			{
@@ -36,12 +40,18 @@ void UInventoryWidget::InitializeInventoryWidget(UInventoryComponent* InInven)
 			}
 		}
 	}
-
+	RefreshInventoryWidget();
 }
 
 void UInventoryWidget::ClearInventoryWidget()
 {
-	TargetInventory = nullptr;
+	if (TargetInventory.IsValid())
+	{
+		TargetInventory->OnSlotChanged.Unbind();
+		TargetInventory->OnMoneyChanged.Clear();
+		TargetInventory = nullptr;
+	}
+	SlotSize = 0;
 }
 
 void UInventoryWidget::OpenInventoryWidget()
@@ -50,6 +60,11 @@ void UInventoryWidget::OpenInventoryWidget()
 
 void UInventoryWidget::CloseInventoryWidget()
 {
+}
+
+void UInventoryWidget::TestRefresh()
+{
+	RefreshInventoryWidget();
 }
 
 void UInventoryWidget::RefreshInventoryWidget() const
@@ -69,10 +84,18 @@ void UInventoryWidget::RefreshInventoryWidget() const
 
 void UInventoryWidget::RefreshSlotWidget(int32 InSlotIndex) const
 {
+	if (IsValidIndex(InSlotIndex) && SlotWidgets[InSlotIndex])
+	{
+		SlotWidgets[InSlotIndex]->RefreshSlot();
+	}
 }
 
 void UInventoryWidget::RefreshMoneyPanel(int32 InCurrentMoney) const
 {
+	if (MoneyPanel)
+	{
+		MoneyPanel->SetMoney(InCurrentMoney);
+	}
 }
 
 void UInventoryWidget::NativeConstruct()
@@ -82,6 +105,14 @@ void UInventoryWidget::NativeConstruct()
 	{
 		CloseButton->OnClicked.AddDynamic(this, &UInventoryWidget::OnClickedCloseButton);
 	}
+
+	if (IInventoryUserInterface* InvenUser = Cast<IInventoryUserInterface>(GetOwningPlayerPawn()))
+	{
+		if (UInventoryComponent* InvenComp = InvenUser->GetInventoryComponent())
+		{
+			InitializeInventoryWidget(InvenComp);
+		}
+	}	
 }
 
 void UInventoryWidget::OnClickedCloseButton()
