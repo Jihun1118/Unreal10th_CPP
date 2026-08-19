@@ -22,6 +22,10 @@ class UNREAL10TH_CPP_API UInventorySlotWidget : public UUserWidget
 public:
 	void InitializeSlot(UInventoryComponent* InInven, int32 InIndex);
 	void RefreshSlot() const;
+
+protected:
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 	
 protected:
 	// 아이콘 이미지
@@ -52,5 +56,6 @@ private:
 	int32 Index = InvalidIndex;
 
 	// 인벤토리의 슬롯
-	FInvenSlot* Slot = nullptr;	// 구조체는 TWeakObjectPtr로 저장안됨
+	const FInvenSlot* Slot = nullptr;	// 구조체는 TWeakObjectPtr로 저장안됨
+	
 };

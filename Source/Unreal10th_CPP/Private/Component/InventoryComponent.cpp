@@ -45,6 +45,7 @@ bool UInventoryComponent::ExecuteCommand(const FInventoryCommand& Command, FInve
 void UInventoryComponent::AddMoney(int32 InIncome)
 {
 	Money += InIncome;
+	OnMoneyChanged.Broadcast(Money);	// 돈의 변경을 알림
 }
 
 int32 UInventoryComponent::AddItem(const UItemDataAsset* InItemData, int32 InCount)
@@ -125,7 +126,22 @@ void UInventoryComponent::SetSlot(int32 InSlotIndex, const UItemDataAsset* InIte
 	Slot.ItemData = InItemData;
 	Slot.SetCount(InCount);
 
-	// 델리게이트 전담 함수
+	if (!InItemData->IsLoaded())
+	{
+		InItemData->RequestDataLoad(
+			FStreamableDelegate::CreateWeakLambda(
+				this,
+				[this, InSlotIndex]()
+				{
+					// 리프레시용으로 변경 브로드 캐스트 날리기
+					//UE_LOG(LogTemp, Log, TEXT("SetSlot : 비동기 로딩 완료"));
+					OnSlotChanged.ExecuteIfBound(InSlotIndex);
+				})
+		);
+	}
+
+	// 델리게이트 전담 함수(다른 인벤토리 슬롯 변경 함수들은 최종적으로 이 함수를 호출)
+	OnSlotChanged.ExecuteIfBound(InSlotIndex);
 }
 
 void UInventoryComponent::UpdateSlotCount(int32 InSlotIndex, int32 InDeltaCount)
@@ -147,7 +163,7 @@ void UInventoryComponent::ClearSlot(int32 InSlotIndex)
 
 bool UInventoryComponent::HandleAddCommand(
 	const UItemDataAsset* InItemData, int32 InCount, FInventoryCommandResult& OutResult)
-{
+{	
 	int32 RemainingCount = AddItem(InItemData, InCount);
 
 	//RemainingCount가 0이면 인벤토리에 잘 들어갔음. 0을 초과하면 그만큼은 인벤토리에 못들어갔다는 의미
