@@ -22,6 +22,10 @@ class UNREAL10TH_CPP_API UInventorySlotWidget : public UUserWidget
 public:
 	void InitializeSlot(UInventoryComponent* InInven, int32 InIndex);
 	void RefreshSlot() const;
+
+protected:
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 	
 protected:
 	// 아이콘 이미지
