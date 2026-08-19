@@ -31,6 +31,10 @@ public:
 	// 아이템 설명
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Base|Data")
 	FText Description;
+
+	// 아이템 아이콘
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Base|Data")
+	TSoftObjectPtr<UTexture2D> Icon = nullptr;
 	
 	// 아이템 가격
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Base|Data")

@@ -35,7 +35,7 @@ bool UInventoryComponent::ExecuteCommand(const FInventoryCommand& Command, FInve
 		HandleMoneyCommand(Command.Count, OutResult);
 		break;
 	default:
-		UE_LOG(LogTemp, Warning, TEXT("알 수 없는 커맨드 입니다."));
+		UE_LOG(LogTemp, Warning, TEXT("알 수 없는 커맨드 입니다"));
 		break;
 	}
 

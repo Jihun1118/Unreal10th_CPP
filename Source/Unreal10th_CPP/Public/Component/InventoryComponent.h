@@ -80,6 +80,8 @@ public:
 
 	// 임시 슬롯을 리턴하는 함수
 	FInvenSlot* GetTempSlot();
+
+	int32 GetSize() const { return InventorySize; }
 	// --------------------------------------------------------------------
 
 protected:
