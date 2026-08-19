@@ -28,5 +28,5 @@ class UNREAL10TH_CPP_API IInventoryUserInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	virtual UInventoryComponent* GetInventoryComponent() const = 0;
-	virtual bool ExecuteInvectoryCommand(const FInventoryCommand& Command, FInventoryCommandResult& OutResult) = 0;
+	virtual bool ExecuteInventoryCommand(const FInventoryCommand& Command, FInventoryCommandResult& OutResult) = 0;
 };

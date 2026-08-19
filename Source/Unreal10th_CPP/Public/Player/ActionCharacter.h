@@ -45,7 +45,7 @@ public:
 
 	// InventoryComponent로 전달할 함수들 -------------------------------------------------------------
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	virtual bool ExecuteInvectoryCommand(const FInventoryCommand& Command, FInventoryCommandResult& OutResult) override;
+	virtual bool ExecuteInventoryCommand(const FInventoryCommand& Command, FInventoryCommandResult& OutResult) override;
 	// -----------------------------------------------------------------------------------------------
 	
 

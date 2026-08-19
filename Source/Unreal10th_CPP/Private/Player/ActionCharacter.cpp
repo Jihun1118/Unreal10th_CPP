@@ -42,7 +42,7 @@ void AActionCharacter::EquipWeapon_Implementation(UWeaponDataAsset* InWeaponData
 	}
 }
 
-bool AActionCharacter::ExecuteInvectoryCommand(const FInventoryCommand& Command, FInventoryCommandResult& OutResult)
+bool AActionCharacter::ExecuteInventoryCommand(const FInventoryCommand& Command, FInventoryCommandResult& OutResult)
 {
 	if (GetInventoryComponent())
 	{
