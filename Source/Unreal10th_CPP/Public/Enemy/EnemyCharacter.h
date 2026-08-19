@@ -39,7 +39,7 @@ protected:
 	virtual void OnDie();
 
 private:
-	void SpawnPickup(UItemDataAsset* ItemDataAsset);
+	void SpawnPickup(const UItemDataAsset* ItemDataAsset);
 
 protected:
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly)

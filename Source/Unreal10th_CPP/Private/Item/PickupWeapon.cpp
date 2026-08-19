@@ -14,13 +14,13 @@ APickupWeapon::APickupWeapon()
 	Mesh->SetCollisionProfileName("NoCollision");
 }
 
-void APickupWeapon::InitializePickup(UItemDataAsset* InData)
+void APickupWeapon::InitializePickup(const UItemDataAsset* InData)
 {
 	Super::InitializePickup(InData);
 
 	if (DataAsset)
 	{
-		WeaponData = Cast<UWeaponDataAsset>(DataAsset);
+		WeaponData = Cast<const UWeaponDataAsset>(DataAsset);
 		if (USkeletalMesh* MeshData = WeaponData->Mesh.LoadSynchronous())
 		{
 			Mesh->SetSkeletalMesh(MeshData);

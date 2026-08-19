@@ -11,13 +11,13 @@ APickupMisc::APickupMisc()
 	Mesh->SetCollisionProfileName("NoCollision");
 }
 
-void APickupMisc::InitializePickup(UItemDataAsset* InData)
+void APickupMisc::InitializePickup(const UItemDataAsset* InData)
 {
 	Super::InitializePickup(InData);
 
 	if (DataAsset)
 	{
-		MiscData = Cast<UMiscItemDataAsset>(DataAsset);
+		MiscData = Cast<const UMiscItemDataAsset>(DataAsset);
 		if (UStaticMesh* MeshData = MiscData->Mesh.LoadSynchronous())
 		{
 			Mesh->SetStaticMesh(MeshData);

@@ -18,7 +18,7 @@ class UNREAL10TH_CPP_API APickupBase : public AActor
 public:	
 	// Sets default values for this actor's properties
 	APickupBase();
-	virtual void InitializePickup(UItemDataAsset* InData);
+	virtual void InitializePickup(const UItemDataAsset* InData);
 
 protected:
 	virtual void OnConstruction(const FTransform& Transform) override;
@@ -54,7 +54,7 @@ protected:
 
 	// 픽업시 획득할 데이터 에셋
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Base Data")
-	TObjectPtr<UItemDataAsset> DataAsset;
+	TObjectPtr<const UItemDataAsset> DataAsset;
 
 	// 스폰 직후에 아이템이 안먹어지는 시간
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Base Data")

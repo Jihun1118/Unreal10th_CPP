@@ -18,7 +18,7 @@ class UNREAL10TH_CPP_API APickupWeapon : public APickupBase
 	
 public:
 	APickupWeapon();
-	virtual void InitializePickup(UItemDataAsset* InData) override;
+	virtual void InitializePickup(const UItemDataAsset* InData) override;
 
 protected:	
 	virtual UMeshComponent* GetMesh() const override { return Mesh; };
@@ -29,5 +29,5 @@ protected:
 
 private:
 	// 이 픽업을 먹었을 때 획득하는 무기 데이터
-	TWeakObjectPtr<UWeaponDataAsset> WeaponData = nullptr;
+	TWeakObjectPtr<const UWeaponDataAsset> WeaponData = nullptr;
 };
