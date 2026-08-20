@@ -27,7 +27,7 @@ void AActionHUD::BeginPlay()
 		MainHudWidgetInstance = CreateWidget<UMainHudWidget>(GetWorld(), MainHudWidgetClass);
 		if (MainHudWidgetInstance)
 		{
-			MainHudWidgetInstance->AddToViewport();
+			MainHudWidgetInstance->AddToViewport();			
 		}
 	}
 }

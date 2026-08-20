@@ -8,6 +8,7 @@
 #include "Components/UniformGridPanel.h"
 #include "Component/InventoryComponent.h"
 #include "Interface/InventoryUserInterface.h"
+#include "Player/ActionPlayerController.h"
 
 
 void UInventoryWidget::InitializeInventoryWidget(UInventoryComponent* InInven)
@@ -41,6 +42,8 @@ void UInventoryWidget::InitializeInventoryWidget(UInventoryComponent* InInven)
 		}
 	}
 	RefreshInventoryWidget();
+
+	CloseInventoryWidget();
 }
 
 void UInventoryWidget::ClearInventoryWidget()
@@ -57,12 +60,19 @@ void UInventoryWidget::ClearInventoryWidget()
 void UInventoryWidget::OpenInventoryWidget()
 {
 	SetVisibility(ESlateVisibility::Visible);
-	//GetOwningPlayer();
+	if (AActionPlayerController* PC = Cast<AActionPlayerController>(GetOwningPlayer()))
+	{
+		PC->OnInventoryOpenClose(true, this);
+	}
 }
 
 void UInventoryWidget::CloseInventoryWidget()
 {
 	SetVisibility(ESlateVisibility::Collapsed);
+	if (AActionPlayerController* PC = Cast<AActionPlayerController>(GetOwningPlayer()))
+	{
+		PC->OnInventoryOpenClose(false);
+	}
 }
 
 void UInventoryWidget::ToggleInventoryWidget()
@@ -116,6 +126,9 @@ void UInventoryWidget::RefreshMoneyPanel(int32 InCurrentMoney) const
 void UInventoryWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	SetIsFocusable(true);
+
 	if (CloseButton)
 	{
 		CloseButton->OnClicked.AddDynamic(this, &UInventoryWidget::OnClickedCloseButton);
@@ -128,6 +141,17 @@ void UInventoryWidget::NativeConstruct()
 			InitializeInventoryWidget(InvenComp);
 		}
 	}	
+}
+
+FReply UInventoryWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	// 키가 눌려지면 함수는 무조건 실행
+	if (InKeyEvent.GetKey() == EKeys::I)	// 눌려진 키가 I일 때만 처리
+	{
+		CloseInventoryWidget();
+		return FReply::Handled();			// 이 입력에 대한 처리가 끝났다고 알림(Consume처리)
+	}
+	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);	// 내가 처리하지 않은 입력은 부모에서 처리
 }
 
 void UInventoryWidget::OnClickedCloseButton()

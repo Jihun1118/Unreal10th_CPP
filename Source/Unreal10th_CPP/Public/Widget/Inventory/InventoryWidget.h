@@ -47,6 +47,7 @@ protected:
 	void RefreshMoneyPanel(int32 InCurrentMoney) const;
 
 	virtual void NativeConstruct() override;
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
 private:
 	// CloseButton이 눌려졌을 때 실행될 함수
