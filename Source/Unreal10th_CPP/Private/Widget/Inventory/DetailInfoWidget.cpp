@@ -32,11 +32,7 @@ void UDetailInfoWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	CanvasSlot = Cast<UCanvasPanelSlot>(Slot);	
-
-	//UPanelWidget* ParentWidget = GetParent();
-	//UCanvasPanelSlot* ParentSlot = Cast<UCanvasPanelSlot>(ParentWidget->Slot);
-	//ParentPosition = ParentSlot->GetPosition();	
+	CanvasSlot = Cast<UCanvasPanelSlot>(Slot);
 
 	Close();
 }
@@ -62,8 +58,12 @@ void UDetailInfoWidget::UpdateLocation()
 
 	if (CanvasSlot.IsValid())
 	{
-		FVector2D Screen = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetWorld());
-		CanvasSlot->SetPosition(Screen - ParentPosition);
-		//CanvasSlot->SetPosition(Screen - FVector2D(940,312));
+		const FVector2D MouseAbsolute = UWidgetLayoutLibrary::GetMousePositionOnPlatform();
+		if (UPanelWidget* ParentPanel = GetParent())
+		{
+			const FGeometry& ParentGeometry = ParentPanel->GetTickSpaceGeometry();
+			const FVector2D LocalPos = ParentGeometry.AbsoluteToLocal(MouseAbsolute);
+			CanvasSlot->SetPosition(LocalPos);
+		}
 	}
 }

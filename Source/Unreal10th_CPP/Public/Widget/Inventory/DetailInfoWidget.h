@@ -22,8 +22,6 @@ public:
 	void Open(const UItemDataAsset* InItemData);
 	void Close();
 
-	inline void SetParentPosition(const FVector2D& InPosition) { ParentPosition = InPosition; }
-
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
