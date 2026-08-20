@@ -48,7 +48,7 @@ void UInventoryWidget::ClearInventoryWidget()
 	if (TargetInventory.IsValid())
 	{
 		TargetInventory->OnSlotChanged.Unbind();
-		TargetInventory->OnMoneyChanged.Clear();
+		TargetInventory->OnMoneyChanged.RemoveAll(this);
 		TargetInventory = nullptr;
 	}
 	SlotSize = 0;

@@ -14,19 +14,21 @@ void UInventorySlotWidget::InitializeSlot(UInventoryComponent* InInven, int32 In
 	TargetInventory = InInven;
 	Index = InIndex;
 
-	Slot = TargetInventory->GetSlot(Index);
 	RefreshSlot();
 }
 
 void UInventorySlotWidget::RefreshSlot() const
 {
-	if (!Slot)
+	if (!TargetInventory.IsValid()) return;
+
+	const FInvenSlot* TargetSlot = TargetInventory->GetSlot(Index);
+	if (!TargetSlot)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[Slot %d]가 null입니다."), Index);
 		return;
 	}
 
-	if (Slot->IsEmpty())
+	if (TargetSlot->IsEmpty())
 	{
 		// 슬롯이 비어있으면
 		IconImage->SetBrushFromTexture(nullptr);
@@ -36,11 +38,11 @@ void UInventorySlotWidget::RefreshSlot() const
 	else
 	{
 		// 슬롯이 비어있지 않으면
-		IconImage->SetBrushFromTexture(Slot->ItemData->Icon.Get());
+		IconImage->SetBrushFromTexture(TargetSlot->ItemData->Icon.Get());
 		IconImage->SetBrushTintColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
 
-		CountText->SetText(FText::AsNumber(Slot->GetCount()));
-		MaxStackText->SetText(FText::AsNumber(Slot->ItemData->MaxStackCount));
+		CountText->SetText(FText::AsNumber(TargetSlot->GetCount()));
+		MaxStackText->SetText(FText::AsNumber(TargetSlot->ItemData->MaxStackCount));
 		CountBox->SetVisibility(ESlateVisibility::HitTestInvisible);
 	}
 

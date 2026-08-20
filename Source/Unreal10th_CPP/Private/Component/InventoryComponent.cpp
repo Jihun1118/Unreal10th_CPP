@@ -283,7 +283,7 @@ bool UInventoryComponent::HandleDropCommand(int32 InSlotIndex, const FVector& In
 				FTransform SpawnTransform(FRotator::ZeroRotator, SpawnLoction);
 				Factory->SpawnPickupAsync(ItemData, SpawnTransform, FOnPickupSpawned());
 			}
-			Slot.Clear();
+			ClearSlot(InSlotIndex);
 			OutResult.bSuccess = true;
 		}
 	}

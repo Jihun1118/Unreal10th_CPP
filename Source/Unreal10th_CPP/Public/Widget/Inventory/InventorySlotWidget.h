@@ -53,9 +53,5 @@ private:
 	TWeakObjectPtr<UInventoryComponent> TargetInventory = nullptr;
 
 	// 인벤토리의 슬롯 인덱스
-	int32 Index = InvalidIndex;
-
-	// 인벤토리의 슬롯
-	const FInvenSlot* Slot = nullptr;	// 구조체는 TWeakObjectPtr로 저장안됨
-	
+	int32 Index = InvalidIndex;	
 };
