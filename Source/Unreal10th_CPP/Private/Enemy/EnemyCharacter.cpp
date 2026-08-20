@@ -104,7 +104,7 @@ void AEnemyCharacter::OnDie()
 	
 }
 
-void AEnemyCharacter::SpawnPickup(UItemDataAsset* ItemDataAsset)
+void AEnemyCharacter::SpawnPickup(const UItemDataAsset* ItemDataAsset)
 {
 	if (APickupBase* PickupActor = GetWorld()->SpawnActor<APickupBase>(
 		ItemDataAsset->PickupClass.Get(), GetActorTransform()))

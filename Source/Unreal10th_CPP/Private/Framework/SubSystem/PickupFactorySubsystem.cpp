@@ -38,7 +38,7 @@ void UPickupFactorySubsystem::Deinitialize()
     Super::Deinitialize();
 }
 
-APickupBase* UPickupFactorySubsystem::SpawnPickup(UItemDataAsset* InItemDataAsset, const FTransform& InTransform)
+APickupBase* UPickupFactorySubsystem::SpawnPickup(const UItemDataAsset* InItemDataAsset, const FTransform& InTransform)
 {
     if (!InItemDataAsset)
     {
@@ -55,7 +55,7 @@ APickupBase* UPickupFactorySubsystem::SpawnPickup(UItemDataAsset* InItemDataAsse
     return SpawnProcess(InItemDataAsset, InTransform);
 }
 
-void UPickupFactorySubsystem::SpawnPickupAsync(UItemDataAsset* InItemDataAsset, const FTransform& InTransform, FOnPickupSpawned OnSpawned)
+void UPickupFactorySubsystem::SpawnPickupAsync(const UItemDataAsset* InItemDataAsset, const FTransform& InTransform, FOnPickupSpawned OnSpawned)
 {
     if (!InItemDataAsset)
     {
@@ -72,7 +72,7 @@ void UPickupFactorySubsystem::SpawnPickupAsync(UItemDataAsset* InItemDataAsset, 
     }
 
     // 로딩이 안되었으니 비동기 로딩 요청
-    TWeakObjectPtr<UItemDataAsset> WeakDataAsset(InItemDataAsset);
+    TWeakObjectPtr<const UItemDataAsset> WeakDataAsset(InItemDataAsset);
     TSharedPtr<FStreamableHandle> Handle = InItemDataAsset->RequestDataLoad(
         FStreamableDelegate::CreateWeakLambda(
             this,
@@ -86,7 +86,7 @@ void UPickupFactorySubsystem::SpawnPickupAsync(UItemDataAsset* InItemDataAsset, 
                     return;
                 }
 
-                UItemDataAsset* LoadedItemDataAsset = WeakDataAsset.Get();
+                const UItemDataAsset* LoadedItemDataAsset = WeakDataAsset.Get();
                 APickupBase* Spawned = SpawnProcess(LoadedItemDataAsset, InTransform);
                 OnSpawned.ExecuteIfBound(Spawned);
                 UE_LOG(LogTemp, Log, TEXT("[PickupFactorySubsystem] : 비동기 스폰 완료(%s)"),
@@ -107,7 +107,7 @@ void UPickupFactorySubsystem::SpawnPickupAsync(UItemDataAsset* InItemDataAsset, 
     }
 }
 
-void UPickupFactorySubsystem::K2_SpawnPickupAsync(UItemDataAsset* InItemDataAsset, const FTransform& InTransform, FOnPickupSpawnedDynamic OnSpawned)
+void UPickupFactorySubsystem::K2_SpawnPickupAsync(const UItemDataAsset* InItemDataAsset, const FTransform& InTransform, FOnPickupSpawnedDynamic OnSpawned)
 {
     SpawnPickupAsync(InItemDataAsset, InTransform,
         FOnPickupSpawned::CreateLambda(
@@ -119,7 +119,7 @@ void UPickupFactorySubsystem::K2_SpawnPickupAsync(UItemDataAsset* InItemDataAsse
     );
 }
 
-APickupBase* UPickupFactorySubsystem::SpawnProcess(UItemDataAsset* InItemDataAsset, const FTransform& InTransform)
+APickupBase* UPickupFactorySubsystem::SpawnProcess(const UItemDataAsset* InItemDataAsset, const FTransform& InTransform)
 {
     UWorld* World = GetWorld();
     if (!World)

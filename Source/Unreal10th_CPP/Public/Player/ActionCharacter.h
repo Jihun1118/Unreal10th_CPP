@@ -14,6 +14,7 @@ class UInputAction;
 class USpringArmComponent;
 class UCameraComponent;
 class UAnimNotifyState_SectionJump;
+class AActionHUD;
 
 UCLASS()
 class UNREAL10TH_CPP_API AActionCharacter 
@@ -45,7 +46,7 @@ public:
 
 	// InventoryComponent로 전달할 함수들 -------------------------------------------------------------
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	virtual bool ExecuteInvectoryCommand(const FInventoryCommand& Command, FInventoryCommandResult& OutResult) override;
+	virtual bool ExecuteInventoryCommand(const FInventoryCommand& Command, FInventoryCommandResult& OutResult) override;
 	// -----------------------------------------------------------------------------------------------
 	
 
@@ -63,6 +64,7 @@ protected:
 
 protected:
 	void OnTestAction(const FInputActionValue& Value);
+	void OnInventoryAction(const FInputActionValue& Value);
 	void OnMoveAction(const FInputActionValue& Value);
 	void OnAttackAction(const FInputActionValue& Value);
 	void OnRollAction(const FInputActionValue& Value);
@@ -75,6 +77,9 @@ private:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UInputAction> IA_Test;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UInputAction> IA_Inventory;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UInputAction> IA_Move;
@@ -146,4 +151,6 @@ private:
 	TObjectPtr<UAnimInstance> AnimInstance = nullptr;
 
 	bool bSprintMode = false;
+
+	TWeakObjectPtr<AActionHUD> HUD = nullptr;
 };

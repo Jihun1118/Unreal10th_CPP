@@ -12,6 +12,9 @@ class UHorizontalBox;
 class UInventoryComponent;
 struct FInvenSlot;
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnSlotEnter, int32);
+DECLARE_MULTICAST_DELEGATE(FOnSlotLeave);
+
 /**
  * 
  */
@@ -27,6 +30,10 @@ protected:
 	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 	
+public:
+	FOnSlotEnter OnSlotEnter;
+	FOnSlotLeave OnSlotLeave;
+
 protected:
 	// 아이콘 이미지
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -53,9 +60,5 @@ private:
 	TWeakObjectPtr<UInventoryComponent> TargetInventory = nullptr;
 
 	// 인벤토리의 슬롯 인덱스
-	int32 Index = InvalidIndex;
-
-	// 인벤토리의 슬롯
-	const FInvenSlot* Slot = nullptr;	// 구조체는 TWeakObjectPtr로 저장안됨
-	
+	int32 Index = InvalidIndex;	
 };

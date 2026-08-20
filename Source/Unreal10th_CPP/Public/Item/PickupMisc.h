@@ -17,7 +17,7 @@ class UNREAL10TH_CPP_API APickupMisc : public APickupBase
 
 public:
 	APickupMisc();
-	virtual void InitializePickup(UItemDataAsset* InData) override;
+	virtual void InitializePickup(const UItemDataAsset* InData) override;
 	
 protected:
 	virtual UMeshComponent* GetMesh() const override { return Mesh; };
@@ -27,5 +27,5 @@ protected:
 	TObjectPtr<UStaticMeshComponent> Mesh = nullptr;
 
 private:
-	TWeakObjectPtr<UMiscItemDataAsset> MiscData;
+	TWeakObjectPtr<const UMiscItemDataAsset> MiscData;
 };

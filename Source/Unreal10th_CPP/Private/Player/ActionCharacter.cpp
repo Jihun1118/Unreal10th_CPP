@@ -6,6 +6,7 @@
 #include "Component/WeaponComponent.h"
 #include "Component/InventoryComponent.h"
 #include "Data/Item/WeaponDataAsset.h"
+#include "Framework/ActionHUD.h"
 
 #include "EnhancedInputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -42,7 +43,7 @@ void AActionCharacter::EquipWeapon_Implementation(UWeaponDataAsset* InWeaponData
 	}
 }
 
-bool AActionCharacter::ExecuteInvectoryCommand(const FInventoryCommand& Command, FInventoryCommandResult& OutResult)
+bool AActionCharacter::ExecuteInventoryCommand(const FInventoryCommand& Command, FInventoryCommandResult& OutResult)
 {
 	if (GetInventoryComponent())
 	{
@@ -86,6 +87,11 @@ void AActionCharacter::BeginPlay()
 			StaminaAutoRecoveryPerTick);
 		StatComponent->InitializeStat(Data);
 	}
+
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	{
+		HUD = Cast<AActionHUD>(PC->GetHUD());		
+	}
 }
 
 // Called every frame
@@ -118,6 +124,7 @@ void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EnhancedInputComponent->BindAction(IA_Test, ETriggerEvent::Started, this, &AActionCharacter::OnTestAction);
+		EnhancedInputComponent->BindAction(IA_Inventory, ETriggerEvent::Started, this, &AActionCharacter::OnInventoryAction);
 		EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AActionCharacter::OnMoveAction);
 		EnhancedInputComponent->BindAction(IA_Attack, ETriggerEvent::Started, this, &AActionCharacter::OnAttackAction);
 		EnhancedInputComponent->BindAction(IA_Roll, ETriggerEvent::Started, this, &AActionCharacter::OnRollAction);
@@ -152,6 +159,23 @@ void AActionCharacter::OnTestAction(const FInputActionValue& Value)
 	UE_LOG(LogTemp, Log, TEXT("TestAction 실행"));
 
 	//Value.Get<bool>();
+
+}
+
+void AActionCharacter::OnInventoryAction(const FInputActionValue& Value)
+{
+	if (!HUD.IsValid())
+	{
+		if (APlayerController* PC = Cast<APlayerController>(GetController()))
+		{
+			HUD = Cast<AActionHUD>(PC->GetHUD());
+		}
+	}
+
+	if (HUD.IsValid())
+	{
+		HUD->ToggleInventory();
+	}
 
 }
 

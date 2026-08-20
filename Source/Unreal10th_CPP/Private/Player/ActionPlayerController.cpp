@@ -6,6 +6,29 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "InputMappingContext.h"
+#include "Blueprint/UserWidget.h"
+
+void AActionPlayerController::OnInventoryOpenClose(bool bInventoryOpen, UUserWidget* InFocusWidget)
+{
+	//FInputModeGameOnly;	// 기본상태
+	//FInputModeUIOnly;
+	//FInputModeGameAndUI;
+
+	if (bInventoryOpen)
+	{
+		FInputModeUIOnly InputModeUI;
+		InputModeUI.SetWidgetToFocus(InFocusWidget->TakeWidget());
+
+		SetInputMode(InputModeUI);
+		SetShowMouseCursor(true);
+	}
+	else
+	{
+		FInputModeGameOnly InputModeGame;
+		SetInputMode(InputModeGame);
+		SetShowMouseCursor(false);
+	}
+}
 
 void AActionPlayerController::BeginPlay()
 {

@@ -32,7 +32,7 @@ public:
 	TObjectPtr<const UItemDataAsset> ItemData = nullptr;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Inventory|Command")
-	int32 SourceIndex = 1;
+	int32 SourceIndex = 0;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Inventory|Command")
 	int32 TargetIndex = 1;

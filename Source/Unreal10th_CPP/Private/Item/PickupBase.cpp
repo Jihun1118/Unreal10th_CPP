@@ -29,7 +29,7 @@ APickupBase::APickupBase()
 
 }
 
-void APickupBase::InitializePickup(UItemDataAsset* InData)
+void APickupBase::InitializePickup(const UItemDataAsset* InData)
 {
 	DataAsset = InData;
 }
@@ -147,7 +147,7 @@ void APickupBase::OnFinishPickupEffect()
 	{
 		FInventoryCommand Command = FInventoryCommand::MakeAdd(DataAsset, 1);
 		FInventoryCommandResult Result;
-		if (!Inven->ExecuteInvectoryCommand(Command, Result))
+		if (!Inven->ExecuteInventoryCommand(Command, Result))
 		{
 			// 실패하면 다시 스폰
 			UPickupFactorySubsystem* Factory = GetWorld()->GetSubsystem<UPickupFactorySubsystem>();

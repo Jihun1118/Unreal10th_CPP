@@ -281,9 +281,9 @@ bool UInventoryComponent::HandleDropCommand(int32 InSlotIndex, const FVector& In
 				SpawnLoction += InDropLocation;
 
 				FTransform SpawnTransform(FRotator::ZeroRotator, SpawnLoction);
-				Factory->SpawnPickupAsync(const_cast<UItemDataAsset*>(ItemData), SpawnTransform, FOnPickupSpawned());
+				Factory->SpawnPickupAsync(ItemData, SpawnTransform, FOnPickupSpawned());
 			}
-			Slot.Clear();
+			ClearSlot(InSlotIndex);
 			OutResult.bSuccess = true;
 		}
 	}

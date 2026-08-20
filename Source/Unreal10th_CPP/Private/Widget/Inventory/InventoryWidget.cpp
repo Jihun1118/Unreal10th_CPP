@@ -4,10 +4,13 @@
 #include "Widget/Inventory/InventoryWidget.h"
 #include "Widget/Inventory/MoneyPanelWidget.h"
 #include "Widget/Inventory/InventorySlotWidget.h"
+#include "Widget/Inventory/DetailInfoWidget.h"
 #include "Components/Button.h"
 #include "Components/UniformGridPanel.h"
+#include "Components/CanvasPanelSlot.h"
 #include "Component/InventoryComponent.h"
 #include "Interface/InventoryUserInterface.h"
+#include "Player/ActionPlayerController.h"
 
 
 void UInventoryWidget::InitializeInventoryWidget(UInventoryComponent* InInven)
@@ -36,6 +39,23 @@ void UInventoryWidget::InitializeInventoryWidget(UInventoryComponent* InInven)
 			if (UInventorySlotWidget* SlotWidget = Cast<UInventorySlotWidget>(SlotGridPanel->GetChildAt(i)))
 			{
 				SlotWidget->InitializeSlot(TargetInventory.Get(), i);
+				SlotWidget->OnSlotEnter.AddWeakLambda(
+					this,
+					[this](int InIndex)
+					{
+						if (TargetInventory.IsValid())
+						{
+							DetailInfo->Open(TargetInventory->GetSlot(InIndex)->ItemData);
+						}
+					}
+				);
+				SlotWidget->OnSlotLeave.AddWeakLambda(
+					this,
+					[this]()
+					{
+						DetailInfo->Close();
+					}
+				);
 				SlotWidgets.Add(SlotWidget);
 			}
 		}
@@ -45,10 +65,11 @@ void UInventoryWidget::InitializeInventoryWidget(UInventoryComponent* InInven)
 
 void UInventoryWidget::ClearInventoryWidget()
 {
+	SlotWidgets.Empty();
 	if (TargetInventory.IsValid())
 	{
 		TargetInventory->OnSlotChanged.Unbind();
-		TargetInventory->OnMoneyChanged.Clear();
+		TargetInventory->OnMoneyChanged.RemoveAll(this);
 		TargetInventory = nullptr;
 	}
 	SlotSize = 0;
@@ -56,10 +77,37 @@ void UInventoryWidget::ClearInventoryWidget()
 
 void UInventoryWidget::OpenInventoryWidget()
 {
+	UCanvasPanelSlot* Temp = Cast<UCanvasPanelSlot>(Slot);
+	//FVector2D TempPos = Temp->GetPosition();
+	//UE_LOG(LogTemp, Log, TEXT("TempPos : %s"), *TempPos.ToString());
+	DetailInfo->SetParentPosition(Temp->GetPosition());
+
+	SetVisibility(ESlateVisibility::Visible);
+	if (AActionPlayerController* PC = Cast<AActionPlayerController>(GetOwningPlayer()))
+	{
+		PC->OnInventoryOpenClose(true, this);
+	}
 }
 
 void UInventoryWidget::CloseInventoryWidget()
 {
+	SetVisibility(ESlateVisibility::Collapsed);
+	if (AActionPlayerController* PC = Cast<AActionPlayerController>(GetOwningPlayer()))
+	{
+		PC->OnInventoryOpenClose(false);
+	}
+}
+
+void UInventoryWidget::ToggleInventoryWidget()
+{
+	if (IsInventoryOpen())
+	{
+		CloseInventoryWidget();
+	}
+	else
+	{
+		OpenInventoryWidget();
+	}
 }
 
 void UInventoryWidget::TestRefresh()
@@ -101,6 +149,9 @@ void UInventoryWidget::RefreshMoneyPanel(int32 InCurrentMoney) const
 void UInventoryWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	SetIsFocusable(true);
+
 	if (CloseButton)
 	{
 		CloseButton->OnClicked.AddDynamic(this, &UInventoryWidget::OnClickedCloseButton);
@@ -113,6 +164,19 @@ void UInventoryWidget::NativeConstruct()
 			InitializeInventoryWidget(InvenComp);
 		}
 	}	
+
+	CloseInventoryWidget();
+}
+
+FReply UInventoryWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	// 키가 눌려지면 함수는 무조건 실행
+	if (InKeyEvent.GetKey() == EKeys::I)	// 눌려진 키가 I일 때만 처리
+	{
+		CloseInventoryWidget();
+		return FReply::Handled();			// 이 입력에 대한 처리가 끝났다고 알림(Consume처리)
+	}
+	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);	// 내가 처리하지 않은 입력은 부모에서 처리
 }
 
 void UInventoryWidget::OnClickedCloseButton()

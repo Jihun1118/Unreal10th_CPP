@@ -10,6 +10,14 @@ UMainHudWidget* AActionHUD::GetMainHudWidget() const
 	return MainHudWidgetInstance;
 }
 
+void AActionHUD::ToggleInventory()
+{
+	if (MainHudWidgetInstance)
+	{
+		MainHudWidgetInstance->ToggleInventory();
+	}
+}
+
 void AActionHUD::BeginPlay()
 {
 	Super::BeginPlay();
@@ -19,7 +27,7 @@ void AActionHUD::BeginPlay()
 		MainHudWidgetInstance = CreateWidget<UMainHudWidget>(GetWorld(), MainHudWidgetClass);
 		if (MainHudWidgetInstance)
 		{
-			MainHudWidgetInstance->AddToViewport();
+			MainHudWidgetInstance->AddToViewport();			
 		}
 	}
 }

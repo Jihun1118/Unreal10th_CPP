@@ -9,6 +9,7 @@
 
 class UInputMappingContext;
 class UInputAction;
+class SWidget;
 /**
  * 
  */
@@ -16,6 +17,8 @@ UCLASS()
 class UNREAL10TH_CPP_API AActionPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+public:
+	void OnInventoryOpenClose(bool bInventoryOpen, UUserWidget* InFocusWidget = nullptr);
 
 protected:
 	virtual void BeginPlay() override;

@@ -11,6 +11,7 @@ class UMoneyPanelWidget;
 class UUniformGridPanel;
 class UInventoryComponent;
 class UInventorySlotWidget;
+class UDetailInfoWidget;
 
 /**
  * 
@@ -29,6 +30,10 @@ public:
 	void OpenInventoryWidget();
 	// 인벤토리 닫기
 	void CloseInventoryWidget();
+	// 열려 있으면 닫히고 닫혀 있으면 열리고
+	void ToggleInventoryWidget();
+
+	bool IsInventoryOpen() const { return GetVisibility() == ESlateVisibility::Visible; }
 
 #if WITH_EDITOR
 	void TestRefresh();
@@ -43,6 +48,7 @@ protected:
 	void RefreshMoneyPanel(int32 InCurrentMoney) const;
 
 	virtual void NativeConstruct() override;
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
 private:
 	// CloseButton이 눌려졌을 때 실행될 함수
@@ -61,6 +67,9 @@ protected:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UUniformGridPanel> SlotGridPanel;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<UDetailInfoWidget> DetailInfo;
 
 private:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
