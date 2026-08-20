@@ -2,6 +2,8 @@
 
 
 #include "Widget/Inventory/InventorySlotWidget.h"
+#include "Widget/Inventory/InventoryDragDropOperation.h"
+#include "Widget/Inventory/TemporarySlotWidget.h"
 #include "Component/InventoryComponent.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
@@ -60,4 +62,50 @@ void UInventorySlotWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 	OnSlotLeave.Broadcast();
 	//UE_LOG(LogTemp, Log, TEXT("OnMouseLeave : %d 슬롯"), Index);
 	Super::NativeOnMouseLeave(InMouseEvent);
+}
+
+void UInventorySlotWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
+{
+	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
+
+	UE_LOG(LogTemp, Log, TEXT("드래그가 %d 슬롯에서 시작"), Index);
+
+	UInventoryDragDropOperation* DragOp = NewObject<UInventoryDragDropOperation>();
+	//DragOp->ItemData
+
+	UTemporarySlotWidget* DragTempWidget = CreateWidget<UTemporarySlotWidget>(
+		this,
+		TargetInventory->GetTemporasySlotWidgetClass()
+	);
+	DragOp->DefaultDragVisual = DragTempWidget;
+	OutOperation = DragOp;	// NativeOnDrop과 NativeOnDragCancelled를 발동시키기 위해 필수
+}
+
+bool UInventorySlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	UE_LOG(LogTemp, Log, TEXT("드래그가 %d 슬롯에서 종료"), Index);
+	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+}
+
+void UInventorySlotWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	UE_LOG(LogTemp, Log, TEXT("드래그가 실패"));
+	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
+}
+
+FReply UInventorySlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	// 마우스 버튼이 눌려지면 실행되는 함수
+	if (InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton))	
+	{
+		// 마우스 왼쪽이 눌려져 있다.
+		if (FInvenSlot* InvenSlot = TargetInventory->GetSlot(Index))
+		{
+			if (!InvenSlot->IsEmpty())
+			{
+				return FReply::Handled().DetectDrag(TakeWidget(), EKeys::LeftMouseButton);
+			}
+		}
+	}
+	return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 }

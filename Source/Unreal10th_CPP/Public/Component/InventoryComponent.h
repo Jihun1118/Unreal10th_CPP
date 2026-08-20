@@ -8,6 +8,9 @@
 #include "Data/Item/ItemDataAsset.h"
 #include "InventoryComponent.generated.h"
 
+
+class UTemporarySlotWidget;
+
 DECLARE_DELEGATE_OneParam(FOnInventorySlotChanged, int32);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnInventoryMoneyChanged, int32);
 
@@ -75,7 +78,7 @@ public:
 
 	// Getter ------------------------------------------------------------
 	// 현재 돈을 리턴하는 함수
-	int32 GetMoney() const { return Money; }
+	inline int32 GetMoney() const { return Money; }
 
 	// 특정 슬롯을 리턴하는 함수
 	FInvenSlot* GetSlot(int InSlotIndex);
@@ -83,7 +86,11 @@ public:
 	// 임시 슬롯을 리턴하는 함수
 	FInvenSlot* GetTempSlot();
 
-	int32 GetSize() const { return InventorySize; }
+	// 인벤토리 크기를 리턴하는 함수
+	inline int32 GetSize() const { return InventorySize; }
+
+	// 임시 슬롯의 위젯 클래스를 리턴하는 함수
+	inline TSubclassOf<UTemporarySlotWidget> GetTemporasySlotWidgetClass() const { return TemporarySlotWidgetClass; }
 	// --------------------------------------------------------------------
 
 protected:
@@ -146,6 +153,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory|Slot")
 	TArray<FInvenSlot> Slots;	// 크기는 InventorySize + 1(임시 슬롯)
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory|Slot")
+	TSubclassOf<UTemporarySlotWidget> TemporarySlotWidgetClass;
 
 private:
 	// 인벤토리의 크기
