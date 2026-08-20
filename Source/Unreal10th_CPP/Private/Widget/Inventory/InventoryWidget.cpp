@@ -77,11 +77,6 @@ void UInventoryWidget::ClearInventoryWidget()
 
 void UInventoryWidget::OpenInventoryWidget()
 {
-	UCanvasPanelSlot* Temp = Cast<UCanvasPanelSlot>(Slot);
-	//FVector2D TempPos = Temp->GetPosition();
-	//UE_LOG(LogTemp, Log, TEXT("TempPos : %s"), *TempPos.ToString());
-	DetailInfo->SetParentPosition(Temp->GetPosition());
-
 	SetVisibility(ESlateVisibility::Visible);
 	if (AActionPlayerController* PC = Cast<AActionPlayerController>(GetOwningPlayer()))
 	{
