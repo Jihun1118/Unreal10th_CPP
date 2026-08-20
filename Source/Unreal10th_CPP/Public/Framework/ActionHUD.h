@@ -18,6 +18,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UMainHudWidget* GetMainHudWidget() const;
 
+	UFUNCTION(BlueprintCallable)
+	void ToggleInventory();
+
 protected:
 	virtual void BeginPlay() override;
 

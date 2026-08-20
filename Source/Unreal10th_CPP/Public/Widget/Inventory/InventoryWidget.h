@@ -29,6 +29,10 @@ public:
 	void OpenInventoryWidget();
 	// 인벤토리 닫기
 	void CloseInventoryWidget();
+	// 열려 있으면 닫히고 닫혀 있으면 열리고
+	void ToggleInventoryWidget();
+
+	bool IsInventoryOpen() const { return GetVisibility() == ESlateVisibility::Visible; }
 
 #if WITH_EDITOR
 	void TestRefresh();

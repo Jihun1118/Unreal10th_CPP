@@ -56,10 +56,25 @@ void UInventoryWidget::ClearInventoryWidget()
 
 void UInventoryWidget::OpenInventoryWidget()
 {
+	SetVisibility(ESlateVisibility::Visible);
+	//GetOwningPlayer();
 }
 
 void UInventoryWidget::CloseInventoryWidget()
 {
+	SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void UInventoryWidget::ToggleInventoryWidget()
+{
+	if (IsInventoryOpen())
+	{
+		CloseInventoryWidget();
+	}
+	else
+	{
+		OpenInventoryWidget();
+	}
 }
 
 void UInventoryWidget::TestRefresh()

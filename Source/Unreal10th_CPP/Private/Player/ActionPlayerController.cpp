@@ -7,6 +7,22 @@
 #include "EnhancedInputComponent.h"
 #include "InputMappingContext.h"
 
+void AActionPlayerController::SetInputMode(bool bInventoryOpen)
+{
+	//FInputModeGameOnly;
+	//FInputModeUIOnly;
+	//FInputModeGameAndUI;
+
+	if (bInventoryOpen)
+	{
+
+	}
+	else
+	{
+
+	}
+}
+
 void AActionPlayerController::BeginPlay()
 {
 	Super::BeginPlay();

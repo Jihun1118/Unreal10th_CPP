@@ -16,6 +16,8 @@ UCLASS()
 class UNREAL10TH_CPP_API AActionPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+public:
+	void SetInputMode(bool bInventoryOpen);
 
 protected:
 	virtual void BeginPlay() override;
