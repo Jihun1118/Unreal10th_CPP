@@ -4,8 +4,10 @@
 #include "Widget/Inventory/InventoryWidget.h"
 #include "Widget/Inventory/MoneyPanelWidget.h"
 #include "Widget/Inventory/InventorySlotWidget.h"
+#include "Widget/Inventory/DetailInfoWidget.h"
 #include "Components/Button.h"
 #include "Components/UniformGridPanel.h"
+#include "Components/CanvasPanelSlot.h"
 #include "Component/InventoryComponent.h"
 #include "Interface/InventoryUserInterface.h"
 #include "Player/ActionPlayerController.h"
@@ -37,17 +39,33 @@ void UInventoryWidget::InitializeInventoryWidget(UInventoryComponent* InInven)
 			if (UInventorySlotWidget* SlotWidget = Cast<UInventorySlotWidget>(SlotGridPanel->GetChildAt(i)))
 			{
 				SlotWidget->InitializeSlot(TargetInventory.Get(), i);
+				SlotWidget->OnSlotEnter.AddWeakLambda(
+					this,
+					[this](int InIndex)
+					{
+						if (TargetInventory.IsValid())
+						{
+							DetailInfo->Open(TargetInventory->GetSlot(InIndex)->ItemData);
+						}
+					}
+				);
+				SlotWidget->OnSlotLeave.AddWeakLambda(
+					this,
+					[this]()
+					{
+						DetailInfo->Close();
+					}
+				);
 				SlotWidgets.Add(SlotWidget);
 			}
 		}
 	}
 	RefreshInventoryWidget();
-
-	CloseInventoryWidget();
 }
 
 void UInventoryWidget::ClearInventoryWidget()
 {
+	SlotWidgets.Empty();
 	if (TargetInventory.IsValid())
 	{
 		TargetInventory->OnSlotChanged.Unbind();
@@ -59,6 +77,11 @@ void UInventoryWidget::ClearInventoryWidget()
 
 void UInventoryWidget::OpenInventoryWidget()
 {
+	UCanvasPanelSlot* Temp = Cast<UCanvasPanelSlot>(Slot);
+	//FVector2D TempPos = Temp->GetPosition();
+	//UE_LOG(LogTemp, Log, TEXT("TempPos : %s"), *TempPos.ToString());
+	DetailInfo->SetParentPosition(Temp->GetPosition());
+
 	SetVisibility(ESlateVisibility::Visible);
 	if (AActionPlayerController* PC = Cast<AActionPlayerController>(GetOwningPlayer()))
 	{
@@ -141,6 +164,8 @@ void UInventoryWidget::NativeConstruct()
 			InitializeInventoryWidget(InvenComp);
 		}
 	}	
+
+	CloseInventoryWidget();
 }
 
 FReply UInventoryWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)

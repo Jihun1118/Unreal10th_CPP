@@ -12,6 +12,9 @@ class UHorizontalBox;
 class UInventoryComponent;
 struct FInvenSlot;
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnSlotEnter, int32);
+DECLARE_MULTICAST_DELEGATE(FOnSlotLeave);
+
 /**
  * 
  */
@@ -27,6 +30,10 @@ protected:
 	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 	
+public:
+	FOnSlotEnter OnSlotEnter;
+	FOnSlotLeave OnSlotLeave;
+
 protected:
 	// 아이콘 이미지
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))

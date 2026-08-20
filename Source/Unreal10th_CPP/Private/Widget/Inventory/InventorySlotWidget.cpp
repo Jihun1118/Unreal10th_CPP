@@ -51,11 +51,13 @@ void UInventorySlotWidget::RefreshSlot() const
 void UInventorySlotWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
-	UE_LOG(LogTemp, Log, TEXT("OnMouseEnter : %d 슬롯"), Index);
+	//UE_LOG(LogTemp, Log, TEXT("OnMouseEnter : %d 슬롯"), Index);
+	OnSlotEnter.Broadcast(Index);
 }
 
 void UInventorySlotWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {
-	UE_LOG(LogTemp, Log, TEXT("OnMouseLeave : %d 슬롯"), Index);
+	OnSlotLeave.Broadcast();
+	//UE_LOG(LogTemp, Log, TEXT("OnMouseLeave : %d 슬롯"), Index);
 	Super::NativeOnMouseLeave(InMouseEvent);
 }

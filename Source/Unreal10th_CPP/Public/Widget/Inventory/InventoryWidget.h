@@ -11,6 +11,7 @@ class UMoneyPanelWidget;
 class UUniformGridPanel;
 class UInventoryComponent;
 class UInventorySlotWidget;
+class UDetailInfoWidget;
 
 /**
  * 
@@ -66,6 +67,9 @@ protected:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UUniformGridPanel> SlotGridPanel;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<UDetailInfoWidget> DetailInfo;
 
 private:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
