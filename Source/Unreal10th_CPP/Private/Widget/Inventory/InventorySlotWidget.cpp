@@ -76,8 +76,6 @@ void UInventorySlotWidget::NativeOnDragDetected(const FGeometry& InGeometry, con
 
 	UInventoryDragDropOperation* DragOp = NewObject<UInventoryDragDropOperation>();
 	DragOp->StartIndex = Index;
-	DragOp->ItemData = InvenSlot->ItemData;
-	DragOp->Count = InvenSlot->GetCount();
 
 	UTemporarySlotWidget* DragTempWidget = CreateWidget<UTemporarySlotWidget>(
 		this,
