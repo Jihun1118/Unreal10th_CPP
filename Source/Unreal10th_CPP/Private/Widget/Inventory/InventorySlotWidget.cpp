@@ -110,7 +110,7 @@ void UInventorySlotWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDro
 	{
 		UE_LOG(LogTemp, Log, TEXT("플레이어 컨트롤러 확인"));
 		//FHitResult HitResult;
-		//if (PC->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, HitResult))
+		//if (PC->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, HitResult))	// UI에서 관리하는 마우스 좌표와 PC가 관리하는 마우스 좌표가 다름
 		//{
 		//	UE_LOG(LogTemp, Log, TEXT("바닥 히트 성공"));
 		//	FInventoryCommandResult Result;
