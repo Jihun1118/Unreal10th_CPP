@@ -109,46 +109,46 @@ void UInventorySlotWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDro
 	if (APlayerController* PC = GetOwningPlayer())
 	{
 		UE_LOG(LogTemp, Log, TEXT("플레이어 컨트롤러 확인"));
-		FHitResult HitResult;
-		if (PC->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, HitResult))
-		{
-			UE_LOG(LogTemp, Log, TEXT("바닥 히트 성공"));
-			FInventoryCommandResult Result;
-			TargetInventory->ExecuteCommand(
-				FInventoryCommand::MakeDrop(TargetInventory->GetTempSlotIndex(), HitResult.Location), 
-				Result);
-		}
-
-		//FVector2D AbsolutePosition = InDragDropEvent.GetScreenSpacePosition();
-		//FVector2D PixelPosion;
-		//FVector2D ViewportPosition;
-		//USlateBlueprintLibrary::AbsoluteToViewport(this, AbsolutePosition, PixelPosion, ViewportPosition);
-
-		//FVector WorldLocation;
-		//FVector WorldDirection;
-		//if (PC->DeprojectScreenPositionToWorld(
-		//	PixelPosion.X, PixelPosion.Y,
-		//	WorldLocation, WorldDirection))
+		//FHitResult HitResult;
+		//if (PC->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, HitResult))
 		//{
-		//	FVector Start = WorldLocation;
-		//	FVector End = Start + WorldDirection * 10000.0f;
-
-		//	FHitResult HitResult;
-		//	FVector SpawnLocation;
-		//	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECollisionChannel::ECC_Visibility))
-		//	{
-		//		SpawnLocation = HitResult.Location;
-		//	}
-		//	else
-		//	{
-		//		SpawnLocation = End;
-		//	}
-
+		//	UE_LOG(LogTemp, Log, TEXT("바닥 히트 성공"));
 		//	FInventoryCommandResult Result;
 		//	TargetInventory->ExecuteCommand(
-		//		FInventoryCommand::MakeDrop(TargetInventory->GetTempSlotIndex(), SpawnLocation),
+		//		FInventoryCommand::MakeDrop(TargetInventory->GetTempSlotIndex(), HitResult.Location), 
 		//		Result);
 		//}
+
+		FVector2D AbsolutePosition = InDragDropEvent.GetScreenSpacePosition();
+		FVector2D PixelPosion;
+		FVector2D ViewportPosition;
+		USlateBlueprintLibrary::AbsoluteToViewport(this, AbsolutePosition, PixelPosion, ViewportPosition);
+
+		FVector WorldLocation;
+		FVector WorldDirection;
+		if (PC->DeprojectScreenPositionToWorld(
+			PixelPosion.X, PixelPosion.Y,
+			WorldLocation, WorldDirection))
+		{
+			FVector Start = WorldLocation;
+			FVector End = Start + WorldDirection * 10000.0f;
+
+			FHitResult HitResult;
+			FVector SpawnLocation;
+			if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECollisionChannel::ECC_Visibility))
+			{
+				SpawnLocation = HitResult.Location;
+			}
+			else
+			{
+				SpawnLocation = End;
+			}
+
+			FInventoryCommandResult Result;
+			TargetInventory->ExecuteCommand(
+				FInventoryCommand::MakeDrop(TargetInventory->GetTempSlotIndex(), SpawnLocation),
+				Result);
+		}
 	}
 
 	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
