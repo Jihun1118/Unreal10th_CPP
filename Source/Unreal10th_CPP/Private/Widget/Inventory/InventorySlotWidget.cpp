@@ -168,5 +168,16 @@ FReply UInventorySlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry
 			}
 		}
 	}
+	else if (InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton))
+	{
+		if (FInvenSlot* InvenSlot = TargetInventory->GetSlot(Index))
+		{
+			if (!InvenSlot->IsEmpty())
+			{
+				FInventoryCommandResult Result;
+				TargetInventory->ExecuteCommand(FInventoryCommand::MakeUse(Index), Result);
+			}
+		}
+	}
 	return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 }

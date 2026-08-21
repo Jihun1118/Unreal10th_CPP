@@ -3,6 +3,7 @@
 
 #include "Component/InventoryComponent.h"
 #include "Framework/SubSystem/PickupFactorySubsystem.h"
+#include "Data/Item/UseableItemDataAsset.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -102,6 +103,17 @@ int32 UInventoryComponent::AddItem(const UItemDataAsset* InItemData, int32 InCou
 
 void UInventoryComponent::UseItem(int32 InIndex)
 {
+	if (FInvenSlot* InvenSlot = GetSlot(InIndex))
+	{
+		if (const UUseableItemDataAsset* Useable = Cast<const UUseableItemDataAsset>(InvenSlot->ItemData))
+		{
+			if (Useable->ItemAction)
+			{
+				Useable->ItemAction->ExecuteAction_Implementation(GetOwner(), GetOwner());
+				UpdateSlotCount(InIndex, -1);
+			}
+		}
+	}
 }
 
 FInvenSlot* UInventoryComponent::GetSlot(int InSlotIndex)
