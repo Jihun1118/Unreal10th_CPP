@@ -31,6 +31,9 @@ bool UInventoryComponent::ExecuteCommand(const FInventoryCommand& Command, FInve
 	case EInventoryCommandType::Use:
 		HandleUseCommand(Command.SourceIndex, OutResult);
 		break;
+	case EInventoryCommandType::Clear:
+		HandleClearCommand(Command.TargetIndex, OutResult);
+		break;
 	case EInventoryCommandType::Money:
 		HandleMoneyCommand(Command.Count, OutResult);
 		break;
@@ -115,7 +118,7 @@ FInvenSlot* UInventoryComponent::GetSlot(int InSlotIndex)
 
 FInvenSlot* UInventoryComponent::GetTempSlot()
 {
-	return &Slots[InventorySize];	// 무조건 마지막 슬롯이 Temp슬롯
+	return &Slots[TempSlotIndex];	// 무조건 마지막 슬롯이 Temp슬롯
 }
 
 void UInventoryComponent::SetSlot(int32 InSlotIndex, const UItemDataAsset* InItemData, int32 InCount)
@@ -126,7 +129,7 @@ void UInventoryComponent::SetSlot(int32 InSlotIndex, const UItemDataAsset* InIte
 	Slot.ItemData = InItemData;
 	Slot.SetCount(InCount);
 
-	if (!InItemData->IsLoaded())
+	if (InItemData && !InItemData->IsLoaded())
 	{
 		InItemData->RequestDataLoad(
 			FStreamableDelegate::CreateWeakLambda(
@@ -300,6 +303,20 @@ bool UInventoryComponent::HandleUseCommand(int32 InSlotIndex, FInventoryCommandR
 	}
 
 	UseItem(InSlotIndex);
+	OutResult.bSuccess = true;
+
+	return OutResult.bSuccess;
+}
+
+bool UInventoryComponent::HandleClearCommand(int32 InSlotIndex, FInventoryCommandResult& OutResult)
+{
+	OutResult.bSuccess = false;
+	if (!IsValidIndex(InSlotIndex))
+	{
+		return OutResult.bSuccess;
+	}
+
+	ClearSlot(InSlotIndex);
 	OutResult.bSuccess = true;
 
 	return OutResult.bSuccess;
