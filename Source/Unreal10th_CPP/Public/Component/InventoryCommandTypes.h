@@ -15,7 +15,8 @@ enum class EInventoryCommandType : uint8
 	Drop,		// 아이템 버리기
 	Use,		// 아이템 사용하기
 	Clear,		// 슬롯 비우기
-	Money		// 돈 변경
+	Money,		// 돈 변경
+	Sell,		// 아이템 판매	
 };
 
 USTRUCT(BlueprintType)
@@ -93,6 +94,14 @@ public:
 		FInventoryCommand Command;
 		Command.Type = EInventoryCommandType::Money;
 		Command.Count = InMoneyDiff;
+		return Command;
+	}
+
+	static FInventoryCommand MakeSell(int32 InSlotIndex)
+	{
+		FInventoryCommand Command;
+		Command.Type = EInventoryCommandType::Sell;
+		Command.TargetIndex = InSlotIndex;
 		return Command;
 	}
 
