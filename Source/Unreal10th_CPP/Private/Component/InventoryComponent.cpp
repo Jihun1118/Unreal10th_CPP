@@ -3,6 +3,7 @@
 
 #include "Component/InventoryComponent.h"
 #include "Framework/SubSystem/PickupFactorySubsystem.h"
+#include "Data/Item/UseableItemDataAsset.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -31,8 +32,14 @@ bool UInventoryComponent::ExecuteCommand(const FInventoryCommand& Command, FInve
 	case EInventoryCommandType::Use:
 		HandleUseCommand(Command.SourceIndex, OutResult);
 		break;
+	case EInventoryCommandType::Clear:
+		HandleClearCommand(Command.TargetIndex, OutResult);
+		break;
 	case EInventoryCommandType::Money:
 		HandleMoneyCommand(Command.Count, OutResult);
+		break;
+	case EInventoryCommandType::Sell:
+		HandleSellCommand(Command.TargetIndex, OutResult);
 		break;
 	default:
 		UE_LOG(LogTemp, Warning, TEXT("알 수 없는 커맨드 입니다"));
@@ -99,6 +106,17 @@ int32 UInventoryComponent::AddItem(const UItemDataAsset* InItemData, int32 InCou
 
 void UInventoryComponent::UseItem(int32 InIndex)
 {
+	if (FInvenSlot* InvenSlot = GetSlot(InIndex))
+	{
+		if (const UUseableItemDataAsset* Useable = Cast<const UUseableItemDataAsset>(InvenSlot->ItemData))
+		{
+			if (Useable->ItemAction)
+			{
+				Useable->ItemAction->ExecuteAction_Implementation(GetOwner(), GetOwner());
+				UpdateSlotCount(InIndex, -1);
+			}
+		}
+	}
 }
 
 FInvenSlot* UInventoryComponent::GetSlot(int InSlotIndex)
@@ -115,7 +133,7 @@ FInvenSlot* UInventoryComponent::GetSlot(int InSlotIndex)
 
 FInvenSlot* UInventoryComponent::GetTempSlot()
 {
-	return &Slots[InventorySize];	// 무조건 마지막 슬롯이 Temp슬롯
+	return &Slots[TempSlotIndex];	// 무조건 마지막 슬롯이 Temp슬롯
 }
 
 void UInventoryComponent::SetSlot(int32 InSlotIndex, const UItemDataAsset* InItemData, int32 InCount)
@@ -126,7 +144,7 @@ void UInventoryComponent::SetSlot(int32 InSlotIndex, const UItemDataAsset* InIte
 	Slot.ItemData = InItemData;
 	Slot.SetCount(InCount);
 
-	if (!InItemData->IsLoaded())
+	if (InItemData && !InItemData->IsLoaded())
 	{
 		InItemData->RequestDataLoad(
 			FStreamableDelegate::CreateWeakLambda(
@@ -305,6 +323,20 @@ bool UInventoryComponent::HandleUseCommand(int32 InSlotIndex, FInventoryCommandR
 	return OutResult.bSuccess;
 }
 
+bool UInventoryComponent::HandleClearCommand(int32 InSlotIndex, FInventoryCommandResult& OutResult)
+{
+	OutResult.bSuccess = false;
+	if (!IsValidIndex(InSlotIndex))
+	{
+		return OutResult.bSuccess;
+	}
+
+	ClearSlot(InSlotIndex);
+	OutResult.bSuccess = true;
+
+	return OutResult.bSuccess;
+}
+
 bool UInventoryComponent::HandleMoneyCommand(int32 InMoneyDiff, FInventoryCommandResult& OutResult)
 {
 	OutResult.bSuccess = false;
@@ -312,6 +344,24 @@ bool UInventoryComponent::HandleMoneyCommand(int32 InMoneyDiff, FInventoryComman
 	AddMoney(InMoneyDiff);
 	OutResult.bSuccess = true;
 
+	return OutResult.bSuccess;
+}
+
+bool UInventoryComponent::HandleSellCommand(int32 InSlotIndex, FInventoryCommandResult& OutResult)
+{
+	FInvenSlot* TargetSlot = GetSlot(InSlotIndex);
+	if(TargetSlot->IsEmpty())
+	{
+		OutResult.bSuccess = false;
+		return OutResult.bSuccess;
+	}
+
+	int32 SellPrice = TargetSlot->ItemData->Price * 0.5f;
+	AddMoney(SellPrice * TargetSlot->GetCount());
+
+	ClearSlot(InSlotIndex);
+
+	OutResult.bSuccess = true;
 	return OutResult.bSuccess;
 }
 

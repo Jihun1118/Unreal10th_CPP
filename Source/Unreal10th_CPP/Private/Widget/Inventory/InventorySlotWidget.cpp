@@ -8,6 +8,7 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/HorizontalBox.h"
+#include "Blueprint/SlateBlueprintLibrary.h"
 
 void UInventorySlotWidget::InitializeSlot(UInventoryComponent* InInven, int32 InIndex)
 {
@@ -68,28 +69,88 @@ void UInventorySlotWidget::NativeOnDragDetected(const FGeometry& InGeometry, con
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 
+	FInvenSlot* InvenSlot = TargetInventory->GetSlot(Index);
+	if (!InvenSlot || !InvenSlot->ItemData) return;
+
 	UE_LOG(LogTemp, Log, TEXT("드래그가 %d 슬롯에서 시작"), Index);
 
 	UInventoryDragDropOperation* DragOp = NewObject<UInventoryDragDropOperation>();
-	//DragOp->ItemData
+	DragOp->StartIndex = Index;
 
 	UTemporarySlotWidget* DragTempWidget = CreateWidget<UTemporarySlotWidget>(
 		this,
 		TargetInventory->GetTemporasySlotWidgetClass()
 	);
+	DragTempWidget->SetVisual(InvenSlot->ItemData->Icon.Get(), InvenSlot->GetCount());
 	DragOp->DefaultDragVisual = DragTempWidget;
 	OutOperation = DragOp;	// NativeOnDrop과 NativeOnDragCancelled를 발동시키기 위해 필수
+
+	FInventoryCommandResult Result;
+	TargetInventory->ExecuteCommand(FInventoryCommand::MakeMove(Index, TargetInventory->GetTempSlotIndex()), Result);
 }
 
 bool UInventorySlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	UE_LOG(LogTemp, Log, TEXT("드래그가 %d 슬롯에서 종료"), Index);
-	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+	//return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+	FInventoryCommandResult Result;
+	TargetInventory->ExecuteCommand(FInventoryCommand::MakeMove(TargetInventory->GetTempSlotIndex(), Index), Result);
+
+	UInventoryDragDropOperation* Op = Cast< UInventoryDragDropOperation>(InOperation);
+	TargetInventory->ExecuteCommand(FInventoryCommand::MakeMove(TargetInventory->GetTempSlotIndex(), Op->StartIndex ), Result);
+
+	return true;
 }
 
 void UInventorySlotWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
-	UE_LOG(LogTemp, Log, TEXT("드래그가 실패"));
+	UE_LOG(LogTemp, Log, TEXT("바닥에서 드래그 종료"));
+	
+	if (APlayerController* PC = GetOwningPlayer())
+	{
+		UE_LOG(LogTemp, Log, TEXT("플레이어 컨트롤러 확인"));
+		//FHitResult HitResult;
+		//if (PC->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, HitResult))	// UI에서 관리하는 마우스 좌표와 PC가 관리하는 마우스 좌표가 다름
+		//{
+		//	UE_LOG(LogTemp, Log, TEXT("바닥 히트 성공"));
+		//	FInventoryCommandResult Result;
+		//	TargetInventory->ExecuteCommand(
+		//		FInventoryCommand::MakeDrop(TargetInventory->GetTempSlotIndex(), HitResult.Location), 
+		//		Result);
+		//}
+
+		FVector2D AbsolutePosition = InDragDropEvent.GetScreenSpacePosition();
+		FVector2D PixelPosion;
+		FVector2D ViewportPosition;
+		USlateBlueprintLibrary::AbsoluteToViewport(this, AbsolutePosition, PixelPosion, ViewportPosition);
+
+		FVector WorldLocation;
+		FVector WorldDirection;
+		if (PC->DeprojectScreenPositionToWorld(
+			PixelPosion.X, PixelPosion.Y,
+			WorldLocation, WorldDirection))
+		{
+			FVector Start = WorldLocation;
+			FVector End = Start + WorldDirection * 10000.0f;
+
+			FHitResult HitResult;
+			FVector SpawnLocation;
+			if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECollisionChannel::ECC_Visibility))
+			{
+				SpawnLocation = HitResult.Location;
+			}
+			else
+			{
+				SpawnLocation = End;
+			}
+
+			FInventoryCommandResult Result;
+			TargetInventory->ExecuteCommand(
+				FInventoryCommand::MakeDrop(TargetInventory->GetTempSlotIndex(), SpawnLocation),
+				Result);
+		}
+	}
+
 	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
 }
 
@@ -104,6 +165,17 @@ FReply UInventorySlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry
 			if (!InvenSlot->IsEmpty())
 			{
 				return FReply::Handled().DetectDrag(TakeWidget(), EKeys::LeftMouseButton);
+			}
+		}
+	}
+	else if (InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton))
+	{
+		if (FInvenSlot* InvenSlot = TargetInventory->GetSlot(Index))
+		{
+			if (!InvenSlot->IsEmpty())
+			{
+				FInventoryCommandResult Result;
+				TargetInventory->ExecuteCommand(FInventoryCommand::MakeUse(Index), Result);
 			}
 		}
 	}

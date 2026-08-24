@@ -5,6 +5,7 @@
 #include "Widget/Inventory/MoneyPanelWidget.h"
 #include "Widget/Inventory/InventorySlotWidget.h"
 #include "Widget/Inventory/DetailInfoWidget.h"
+#include "Widget/Inventory/InventoryDragDropOperation.h"
 #include "Components/Button.h"
 #include "Components/UniformGridPanel.h"
 #include "Components/CanvasPanelSlot.h"
@@ -160,7 +161,7 @@ void UInventoryWidget::NativeConstruct()
 		}
 	}	
 
-	CloseInventoryWidget();
+	//CloseInventoryWidget();
 }
 
 FReply UInventoryWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
@@ -172,6 +173,15 @@ FReply UInventoryWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKey
 		return FReply::Handled();			// 이 입력에 대한 처리가 끝났다고 알림(Consume처리)
 	}
 	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);	// 내가 처리하지 않은 입력은 부모에서 처리
+}
+
+bool UInventoryWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	UE_LOG(LogTemp, Log, TEXT("인벤토리 위젯에서 드랍이 끝났다."));
+	FInventoryCommandResult Result;
+	UInventoryDragDropOperation* Op = Cast< UInventoryDragDropOperation>(InOperation);
+	TargetInventory->ExecuteCommand(FInventoryCommand::MakeMove(TargetInventory->GetTempSlotIndex(), Op->StartIndex), Result);
+	return true;
 }
 
 void UInventoryWidget::OnClickedCloseButton()

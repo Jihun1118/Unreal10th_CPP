@@ -17,5 +17,5 @@ class UNREAL10TH_CPP_API UInventoryDragDropOperation : public UDragDropOperation
 	GENERATED_BODY()
 public:
 	UPROPERTY(BlueprintReadOnly)
-	TWeakObjectPtr<const UItemDataAsset> ItemData;
+	int32 StartIndex = 0;
 };

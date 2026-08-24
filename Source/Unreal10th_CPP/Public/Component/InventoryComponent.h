@@ -86,6 +86,8 @@ public:
 	// 임시 슬롯을 리턴하는 함수
 	FInvenSlot* GetTempSlot();
 
+	inline int32 GetTempSlotIndex() const { return TempSlotIndex; }
+
 	// 인벤토리 크기를 리턴하는 함수
 	inline int32 GetSize() const { return InventorySize; }
 
@@ -116,15 +118,17 @@ protected:
 
 	// 인덱스가 적절한 범위인지 확인하는 함수
 	inline bool IsValidIndex(int32 InSlotIndex) const {
-		return (InSlotIndex < InventorySize) && (InSlotIndex >= 0);
-	};
+		return (InSlotIndex <= InventorySize) && (InSlotIndex >= 0);
+	}; // 임시슬롯 때문에 접근 범위는 InventorySize까지
 
 	// 커맨드 핸들링 함수들 ----------------------------------------------------------------------------------------
 	bool HandleAddCommand(const UItemDataAsset* InItemData, int32 InCount, FInventoryCommandResult& OutResult);
 	bool HandleMoveCommand(int32 InSourceIndex, int32 InTargetIndex, FInventoryCommandResult& OutResult);
 	bool HandleDropCommand(int32 InSlotIndex, const FVector& InDropLocation, FInventoryCommandResult& OutResult);
 	bool HandleUseCommand(int32 InSlotIndex, FInventoryCommandResult& OutResult);
+	bool HandleClearCommand(int32 InSlotIndex, FInventoryCommandResult& OutResult);
 	bool HandleMoneyCommand(int32 InMoneyDiff, FInventoryCommandResult& OutResult);
+	bool HandleSellCommand(int32 InSlotIndex, FInventoryCommandResult& OutResult);
 	// ------------------------------------------------------------------------------------------------------------
 
 	// 사용안함. Called when the game starts
@@ -146,7 +150,7 @@ public:
 
 	// 돈에 변화가 생겼을 때 발동할 델리게이트(멀티캐스트)
 	FOnInventoryMoneyChanged OnMoneyChanged;
-
+	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory|Money")
 	int32 Money = 0;
@@ -160,7 +164,10 @@ protected:
 
 private:
 	// 인벤토리의 크기
-	static constexpr int32 InventorySize = 10;
+	static constexpr int32 InventorySize = 10;	
+
+	// 임시 슬롯의 인덱스
+	static constexpr int32 TempSlotIndex = InventorySize;
 	
 	// 인벤토리 컴포넌트 함수에서 각종 실패 표시용 정수
 	static constexpr int32 InventoryFail = -1;
